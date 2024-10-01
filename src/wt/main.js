@@ -13,7 +13,7 @@ const performCalculations = async () =>
             const {promise, resolve} = Promise.withResolvers();
             spawnWorker({
                 filePath,
-                data: idx + STARTING_FIBO_NUMBER,
+                data: STARTING_FIBO_NUMBER + idx,
                 onComplete: resolve,
                 onError: resolve
             })
