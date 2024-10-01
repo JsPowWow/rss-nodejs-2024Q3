@@ -1,3 +1,4 @@
+import {Worker} from 'node:worker_threads';
 import path from 'node:path';
 import fs from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
@@ -35,9 +36,7 @@ export const isEvenNumber = (x) => !(x & 1);
  * @returns {Promise<boolean>}
  */
 export const isFileExistsAsync = (path, mode) =>
-    fs.access(path, mode ? mode : fs.constants.F_OK)
-        .then(stubTrue)
-        .catch(stubFalse);
+    fs.access(path, mode ? mode : fs.constants.F_OK).then(stubTrue, stubFalse)
 
 /**
  * @param {string} currentFileMetaUrl fileURLToPath(import.meta.url) of provided file
@@ -69,7 +68,10 @@ export const withCurrentFileMetaUrl = (currentFileMetaUrl) => {
     }
 }
 
-const fileSystemOperationFailError = () => new Error("FS operation failed");
+export const fileSystemOperationFailError = () => new Error("FS operation failed");
+export const throwFileSystemOperationFailError = () => {
+    throw new Error("FS operation failed");
+};
 
 /**
  * @param {string} filePath
@@ -90,3 +92,17 @@ export const assertFileNotExistsAsync = async (filePath) => isFileExistsAsync(fi
         throw fileSystemOperationFailError()
     }
 })
+
+/**
+ * @description Spawn the worker
+ * @param {object} options
+ * @param {function} options.onComplete
+ * @param {function} options.onError
+ * @param {string} options.filePath
+ * @param {object} options.data
+ * @returns {Worker}
+ */
+export const spawnWorker = ({filePath, onComplete, onError, data}) =>
+    new Worker(filePath, {...data})
+        .on('message', (res) => onComplete({status: 'resolved', data: res}))
+        .on('error', (_err) => onError({status: 'error', data: null}))
