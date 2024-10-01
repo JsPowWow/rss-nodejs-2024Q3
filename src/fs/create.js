@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
-import {assertFileNotExistsAsync, isFileExistsAsync, withCurrentFileMetaUrl} from "../utils/index.js";
+import {throwFileSystemOperationFailError, withCurrentFileMetaUrl} from "../utils/index.js";
 
-const {dirPath, filePath} = withCurrentFileMetaUrl(import.meta.url).getFileInDirPath('files', 'fresh.txt');
+const {filePath} = withCurrentFileMetaUrl(import.meta.url).getFileInDirPath('files', 'fresh.txt');
 
 /**
  * @description The function that creates new file `fresh.txt` with content `I am fresh and young`inside the `files` folder;
@@ -9,9 +9,7 @@ const {dirPath, filePath} = withCurrentFileMetaUrl(import.meta.url).getFileInDir
  * @returns {Promise<void>}
  */
 const create = async () =>
-    assertFileNotExistsAsync(filePath)
-        .then(() => isFileExistsAsync(dirPath))
-        .then((isFolderExists) => !isFolderExists ? fs.mkdir(dirPath) : undefined)
-        .then(() => fs.writeFile(filePath, 'I am fresh and young', {encoding: 'utf8'}));
+    fs.writeFile(filePath, 'I am fresh and young', {encoding: 'utf8', flag: 'wx'})
+        .catch(throwFileSystemOperationFailError)
 
 await create();

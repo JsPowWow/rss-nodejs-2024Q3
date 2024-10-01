@@ -6,8 +6,8 @@ const {filePath} = withCurrentFileMetaUrl(import.meta.url).getFileInDirPath('', 
 
 const STARTING_FIBO_NUMBER = 10;
 
-const performCalculations = async () => {
-    Promise.resolve(Promise.all(new Array(cpus().length)
+const performCalculations = async () =>
+    Promise.all(new Array(cpus().length)
         .fill(null)
         .map((_, idx) => {
             const {promise, resolve} = Promise.withResolvers();
@@ -19,7 +19,6 @@ const performCalculations = async () => {
             })
             return promise;
         }))
-    ).then(console.log)
-};
+        .then(console.log);
 
 await performCalculations();

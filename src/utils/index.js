@@ -103,6 +103,6 @@ export const assertFileNotExistsAsync = async (filePath) => isFileExistsAsync(fi
  * @returns {Worker}
  */
 export const spawnWorker = ({filePath, onComplete, onError, data}) =>
-    new Worker(filePath, {...data})
+    new Worker(filePath, {name: 'fiboCalculator', workerData: data})
         .on('message', (res) => onComplete({status: 'resolved', data: res}))
         .on('error', (_err) => onError({status: 'error', data: null}))
