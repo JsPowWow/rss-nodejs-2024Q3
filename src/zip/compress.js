@@ -11,8 +11,8 @@ const {filePath: outputFilePath} = withCurrentFileMetaUrl(import.meta.url).getFi
  */
 const compress = async () => {
     const gzip = zlib.createGzip();
-    const fileReadStream = fs.createReadStream(inputFilePath, {encoding: "utf8", highWaterMark: 1});
-    const fileWriteStream = fs.createWriteStream(outputFilePath, {encoding: "utf8", highWaterMark: 1});
+    const fileReadStream = fs.createReadStream(inputFilePath, {encoding: "utf8"});
+    const fileWriteStream = fs.createWriteStream(outputFilePath, {encoding: "utf8"});
     fileReadStream.pipe(gzip).pipe(fileWriteStream);
 };
 
