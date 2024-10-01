@@ -7,14 +7,14 @@ import "./files/c.js";
 const random = Math.random();
 
 const unknownObject = random > 0.5 ?
-    await readFile(new URL('./files/a.json', import.meta.url), {encoding: 'utf8'}) :
-    await readFile(new URL('./files/b.json', import.meta.url), {encoding: 'utf8'})
+    await readFile(new URL('./files/a.json', import.meta.url), {encoding: 'utf8'}).then(JSON.parse) :
+    await readFile(new URL('./files/b.json', import.meta.url), {encoding: 'utf8'}).then(JSON.parse)
 
 /**
  // ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time
  const unknownObject = random > 0.5 ?
- await import('./files/a.json',{ with: { type: "json" }}) :
- await import('./files/b.json',{ with: { type: "json" }})
+ await import('./files/a.json',{ with: { type: "json" }}).then(JSON.parse) :
+ await import('./files/b.json',{ with: { type: "json" }}).then(JSON.parse)
  */
 
 console.log(`Release ${release()}`);
