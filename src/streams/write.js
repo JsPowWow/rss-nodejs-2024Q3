@@ -8,7 +8,7 @@ const {filePath} = withCurrentFileMetaUrl(import.meta.url).getFileInDirPath('fil
  * @returns {Promise<void>}
  */
 const write = async () => {
-    process.stdin.pipe(fs.createWriteStream(filePath));
+    process.stdin.pipe(fs.createWriteStream(filePath, {encoding: "utf8", highWaterMark: 1}));
 };
 
 await write();
