@@ -15,6 +15,20 @@ export const stubTrue = () => true;
 export const stubFalse = () => false;
 
 /**
+ * @description Check if provided {@link x} number is odd
+ * @param {number} x
+ * @returns {boolean}
+ */
+export const isOddNumber = (x) => Boolean(x & 1);
+
+/**
+ * @description Check if provided {@link x} number is even
+ * @param {number} x
+ * @returns {boolean}
+ */
+export const isEvenNumber = (x) => !(x & 1);
+
+/**
  * @description Check file existence using provided {@link path}
  * @param {string} path
  * @param {number=} mode
@@ -76,4 +90,3 @@ export const assertFileNotExistsAsync = async (filePath) => isFileExistsAsync(fi
         throw fileSystemOperationFailError()
     }
 })
-
