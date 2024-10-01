@@ -40,6 +40,7 @@
   },
   "homepage": "https://github.com/JsPowWow/rss-nodejs-2024Q3",
   "devDependencies": {
-    "@types/node": "^22.7.4"
+    "@types/node": "^22.7.4",
+    "cross-env": "^7.0.3"
   }
 }
