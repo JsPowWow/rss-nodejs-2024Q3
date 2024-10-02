@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';
-import {throwFileSystemOperationFailError, withCurrentFileMetaUrl} from "../utils/index.js";
+import {throwFileSystemOperationFailError, withCurrentFileMetaUrl} from "#utils";
 
 const {filePath} = withCurrentFileMetaUrl(import.meta.url).getFileInDirPath('files', 'fresh.txt');
 

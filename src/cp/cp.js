@@ -7,7 +7,7 @@ import cp from 'node:child_process';
  * @param argsCLOSE
  * @returns {Promise<void>}
  */
-import {withCurrentFileMetaUrl} from "../utils/index.js";
+import {withCurrentFileMetaUrl} from "#utils";
 
 const {filePath} = withCurrentFileMetaUrl(import.meta.url).getFileInDirPath('files', 'script.js');
 

@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';
-import {assertFileExistsAsync, withCurrentFileMetaUrl} from "../utils/index.js";
+import {assertFileExistsAsync, withCurrentFileMetaUrl} from "#utils";
 
 const {filePath} = withCurrentFileMetaUrl(import.meta.url).getFileInDirPath('files', 'fileToRead.txt');
 

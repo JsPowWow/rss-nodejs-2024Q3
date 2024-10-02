@@ -98,7 +98,7 @@ export const assertFileNotExistsAsync = async (filePath) => isFileExistsAsync(fi
  * @description Spawn the worker
  * @param {object} options
  * @param {function (object):void} options.onComplete The worker work complete callback handler
- * @param {function (Error):void} options.onError The worker error callback handler
+ * @param {function (object):void} options.onError The worker error callback handler
  * @param {string} options.filePath
  * @param {object} options.data
  * @returns {Worker}

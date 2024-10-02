@@ -1,6 +1,6 @@
 import {cpus} from 'node:os';
 
-import {spawnWorker, withCurrentFileMetaUrl} from "../utils/index.js";
+import {spawnWorker, withCurrentFileMetaUrl} from "#utils";
 
 const {filePath} = withCurrentFileMetaUrl(import.meta.url).getFileInDirPath('', 'worker.js');
 

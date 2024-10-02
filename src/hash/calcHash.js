@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import crypto from "node:crypto";
-import {withCurrentFileMetaUrl} from "../utils/index.js";
+import {withCurrentFileMetaUrl} from "#utils";
 
 const {filePath} = withCurrentFileMetaUrl(import.meta.url).getFileInDirPath('files', 'fileToCalculateHashFor.txt');
 

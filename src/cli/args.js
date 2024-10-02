@@ -1,4 +1,4 @@
-import {isEvenNumber} from "../utils/index.js";
+import {isEvenNumber} from "#utils";
 
 /**
  * @description The function that parses command line arguments (given in format `--propName value --prop2Name value2` (without any validation)

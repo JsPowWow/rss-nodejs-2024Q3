@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import zlib from 'node:zlib';
-import {withCurrentFileMetaUrl} from "../utils/index.js";
+import {withCurrentFileMetaUrl} from "#utils";
 
 const {filePath: inputFilePath} = withCurrentFileMetaUrl(import.meta.url).getFileInDirPath('files', 'fileToCompress.txt');
 const {filePath: outputFilePath} = withCurrentFileMetaUrl(import.meta.url).getFileInDirPath('files', 'archive.gz');

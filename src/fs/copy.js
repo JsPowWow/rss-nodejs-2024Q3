@@ -1,5 +1,5 @@
 import fs from 'node:fs/promises';
-import {assertFileExistsAsync, assertFileNotExistsAsync, withCurrentFileMetaUrl} from "../utils/index.js";
+import {assertFileExistsAsync, assertFileNotExistsAsync, withCurrentFileMetaUrl} from "#utils";
 
 const currentFile = withCurrentFileMetaUrl(import.meta.url);
 const filesDirPath = currentFile.getDirPath('files');
