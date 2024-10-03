@@ -1,5 +1,19 @@
+import fs from 'node:fs';
+import zlib from 'node:zlib';
+import {withCurrentFileMetaUrl} from "#utils";
+
+const {filePath: inputFilePath} = withCurrentFileMetaUrl(import.meta.url).getFileInDirPath('files', 'fileToCompress.txt');
+const {filePath: outputFilePath} = withCurrentFileMetaUrl(import.meta.url).getFileInDirPath('files', 'archive.gz');
+
+/**
+ * @description The function that compresses file `fileToCompress.txt` to `archive.gz` using zlib and Streams API
+ * @returns {Promise<void>}
+ */
 const compress = async () => {
-    // Write your code here 
+    const gzip = zlib.createGzip();
+    const fileReadStream = fs.createReadStream(inputFilePath, {encoding: "utf8"});
+    const fileWriteStream = fs.createWriteStream(outputFilePath, {encoding: "utf8"});
+    fileReadStream.pipe(gzip).pipe(fileWriteStream);
 };
 
 await compress();
