@@ -1,0 +1,30 @@
+{
+  "name": "file-manager",
+  "version": "1.0.0",
+  "description": "nodejs-cli-file-manager",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "main": "./src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "echo \"TODO AR start command\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JsPowWow/rss-nodejs-2024Q3.git"
+  },
+  "keywords": [
+    "nodejs",
+    "assignments"
+  ],
+  "author": "JsPowWow",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/JsPowWow/rss-nodejs-2024Q3/issues"
+  },
+  "homepage": "https://github.com/JsPowWow/rss-nodejs-2024Q3#readme",
+  "imports": {
+    "#utils": "./src/utils/index.js"
+  }
+}
