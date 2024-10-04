@@ -17,7 +17,7 @@ export const isSome = value => value !== null && value !== undefined;
  * @param value
  * @return {boolean}
  */
-export const isSomeFunction = value => value !== null && value !== undefined && typeof value === 'function';
+export const isFn = value => typeof value === 'function';
 
 /**
  * @description Asserts that provided `value` is not `null` and not `undefined`
@@ -98,3 +98,28 @@ export const sleep = (delay, value = undefined) => new Promise(resolve => {
     }, delay);
 });
 
+/**
+ * @param {*} init
+ * @param {...Function} fns
+ * @return {function(): *}
+ */
+export const pipe =
+    (init, ...fns) => () =>
+        fns.reduce((v, Fn) => isFn(Fn) ? Fn(v) : v, isFn(init) ? init() : init);
+
+/**
+ * @param {...Function} fns
+ * @return {function(*=): *}
+ */
+export const flow =
+    (...fns) =>
+        init =>
+            fns.reduce((v, Fn) => isFn(Fn) ? Fn(v) : v, init);
+
+/**
+ * @param {...Function} fns
+ * @return {function(*=): *}
+ */
+export const flowAsync =
+    (...fns) => init =>
+        fns.reduce((p, Fn) => p.then(Fn), Promise.resolve(init));

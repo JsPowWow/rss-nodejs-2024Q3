@@ -3,7 +3,7 @@ export {
     sleep,
     noop,
     isSome,
-    isSomeFunction,
+    isFn,
     isNil,
     assertIsNonNullable,
     isInstanceOf,
@@ -11,5 +11,10 @@ export {
     stubTrue,
     stubFalse,
     isOddNumber,
-    isEvenNumber
-} from './commonUtils.js';
+    isEvenNumber,
+    pipe,
+    flow,
+    flowAsync
+} from './common-utils.js';
+
+export {textLine} from './console-utils.js';
