@@ -89,37 +89,11 @@ export const noop = () => {
 /**
  * @description Promisified `setTimeout` vwersion
  * @param {number} delay
- * @param {any} value
+ * @param {*=} value
  * @return {Promise<unknown>}
  */
-export const sleep = (delay, value = undefined) => new Promise(resolve => {
+export const sleep = (delay, value) => new Promise(resolve => {
     setTimeout(() => {
         resolve(value);
     }, delay);
 });
-
-/**
- * @param {*} init
- * @param {...Function} fns
- * @return {function(): *}
- */
-export const pipe =
-    (init, ...fns) => () =>
-        fns.reduce((v, Fn) => isFn(Fn) ? Fn(v) : v, isFn(init) ? init() : init);
-
-/**
- * @param {...Function} fns
- * @return {function(*=): *}
- */
-export const flow =
-    (...fns) =>
-        init =>
-            fns.reduce((v, Fn) => isFn(Fn) ? Fn(v) : v, init);
-
-/**
- * @param {...Function} fns
- * @return {function(*=): *}
- */
-export const flowAsync =
-    (...fns) => init =>
-        fns.reduce((p, Fn) => p.then(Fn), Promise.resolve(init));
