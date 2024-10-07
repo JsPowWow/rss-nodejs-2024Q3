@@ -28,8 +28,8 @@
     "#common-utils": "./src/utils/common/index.js",
     "#console-utils": "./src/utils/console/index.js",
     "#readline-utils": "./src/utils/readline/index.js",
+    "#shell-utils": "./src/utils/shell/index.js",
     "#fp-utils": "./src/utils/fp/index.js",
-    "#shell-user": "./src/cmdShell/user/index.js",
     "#errors": "./src/errors/index.js",
     "#shell": "./src/cmdShell/index.js"
   }
