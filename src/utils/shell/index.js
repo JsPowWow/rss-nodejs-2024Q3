@@ -1,5 +1,6 @@
 import process from 'node:process';
 import os from 'node:os';
+import {parseArgs} from 'node:util';
 
 /**
  * @param {number} code
@@ -8,14 +9,15 @@ import os from 'node:os';
 export const processExit = code => () => process.exit(code);
 
 /**
- * @param {string} argName
- * @return {string | undefined}
+ * @param {...string} argNames
+ * @return {object}
  */
-export const getCLIArgValue = (argName) =>
-    process.argv.slice(2)
-        .find((arg) => arg.startsWith(argName))
-        ?.split("=")
-        [1];
+export const getCLIArgumentsValues = (...argNames) =>
+    parseArgs({
+        strict: false,
+        args: process.argv.slice(2),
+        options: Object.fromEntries(argNames.map((a) => ([[a], {type: 'string',default: '', }])))
+    }).values;
 
 /**
  * @return {string}

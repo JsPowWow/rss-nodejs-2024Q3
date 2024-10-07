@@ -22,7 +22,7 @@ export const isFn = value => typeof value === 'function';
 /**
  * @description Asserts that provided `value` is not `null` and not `undefined`
  * @param {unknown} value
- * @param {message?} message
+ * @param {string?} message
  */
 export const assertIsNonNullable = (value, message = undefined) => {
     if (value === undefined || value === null) {

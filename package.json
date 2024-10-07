@@ -31,6 +31,7 @@
     "#shell-utils": "./src/utils/shell/index.js",
     "#fp-utils": "./src/utils/fp/index.js",
     "#errors": "./src/errors/index.js",
-    "#shell": "./src/cmdShell/index.js"
+    "#shell": "./src/cmdShell/index.js",
+    "#shell-commands": "./src/cmdShell/commands/index.js"
   }
 }

@@ -3,17 +3,21 @@ import {ansi, logText, ttyText} from '#console-utils';
 import {IO, pipe, tap} from '#fp-utils';
 import {
     changeDir,
-    getCLIArgValue,
+    getCLIArgumentsValues,
     getCurrentUserName,
     getCurrentWorkingDir,
     getHomeDir,
     processExit
 } from '#shell-utils';
+import {commands} from "#shell-commands"
+
+const USERNAME = "username"
+const argsMap = getCLIArgumentsValues(USERNAME);
 
 /**
  * @return {string}
  */
-const getUserName = () => getCLIArgValue("--username") ?? getCurrentUserName();
+const getUserName = () => argsMap[USERNAME] ?? getCurrentUserName(); // TODO AR yellow warning "--username is missing"
 
 /**
  * @param {string} userName
@@ -41,7 +45,10 @@ const sayGoodByeAndThankYou = userName => logText(
     ttyText(", goodbye!", ansi.blue));
 
 
-const prompt = (rl)=> setReadlinePrompt(`${getCurrentWorkingDir()}> `, rl)
+/**
+ * @param {module:readline/promises.Interface} shell
+ */
+const prompt = shell => setReadlinePrompt(`${ansi.brightWhite()}${getCurrentWorkingDir()}> `, shell)
 
 /**
  * @param {module:readline/promises.Interface} shell
@@ -58,7 +65,13 @@ const handleClose = shell => shell.on('close', pipe(getUserName, sayGoodByeAndTh
  */
 const handleInputLine = shell => {
     return shell.on('line', line => {
-        console.log(`got - ${line}`);
+        const command = commands[line];
+        // TODO AR exec command(s)
+        command
+            ? console.log(`find - ${command.name}`)
+            : console.log(`unknown ${line}`)
+
+        prompt(shell);
     });
 };
 

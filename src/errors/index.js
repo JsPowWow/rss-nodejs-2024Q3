@@ -1,5 +1,11 @@
 export class UnrecognizedCommandError extends Error {
-    constructor(message = 'Unrecognized command') {
+    static throw() {
+        throw new UnrecognizedCommandError();
+    }
+
+    static MESSAGE = 'Unrecognized command';
+
+    constructor(message = UnrecognizedCommandError.MESSAGE) {
         super(message);
     }
 }
