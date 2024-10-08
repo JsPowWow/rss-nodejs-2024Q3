@@ -1,9 +1,9 @@
 import {closeReadline, createReadline, setReadlinePrompt} from '#readline-utils';
-import {ansi, logText, ttyText} from '#console-utils';
+import {log, styledMsg} from '#console-utils';
 import {IO, pipe, tap} from '#fp-utils';
 import {
     changeDir,
-    getCLIArgumentsValues,
+    getCmdArgsValues,
     getCurrentUserName,
     getCurrentWorkingDir,
     getHomeDir,
@@ -12,7 +12,7 @@ import {
 import {commands} from "#shell-commands"
 
 const USERNAME = "username"
-const argsMap = getCLIArgumentsValues(USERNAME);
+const argsMap = getCmdArgsValues(USERNAME);
 
 /**
  * @return {string}
@@ -21,34 +21,32 @@ const getUserName = () => argsMap[USERNAME] ?? getCurrentUserName(); // TODO AR 
 
 /**
  * @param {string} userName
+ * @returns {void}
  */
-const sayGreetings = userName => logText(
-    ttyText("Welcome to the File Manager, ", ansi.blue),
-    ttyText(`${userName}`, ansi.brightYellow),
-    ttyText("!", ansi.blue));
+const sayGreetings = userName => {
+    log(styledMsg({text: 'blue', values: 'yellowBright'})`Welcome to the File Manager, ${userName}!`);
+}
+
 
 /**
  * @returns {void}
  */
-const logCurrentWorkingDir = () => logText(
-    ttyText("You are currently in "),
-    ttyText(getCurrentWorkingDir(), ansi.brightGreen));
+const logCurrentWorkingDir = () => {
+    log(styledMsg({text: 'gray', values: ['yellowBright', 'italic']})`You are currently in ${getCurrentWorkingDir()}!`)
+}
 
 /**
  * @param {string} userName
  * @returns {void}
  */
-const sayGoodByeAndThankYou = userName => logText(
-    ansi.eol,
-    ttyText("Thank you for using File Manager, ", ansi.blue),
-    ttyText(`${userName}`, ansi.brightYellow),
-    ttyText(", goodbye!", ansi.blue));
-
+const sayGoodByeAndThankYou = userName => {
+    log(styledMsg({text: 'blue', values: 'yellowBright'})`\n\nThank you for using File Manager, ${userName}, goodbye!`)
+}
 
 /**
  * @param {module:readline/promises.Interface} shell
  */
-const prompt = shell => setReadlinePrompt(`${ansi.brightWhite()}${getCurrentWorkingDir()}> `, shell)
+const prompt = shell => setReadlinePrompt(styledMsg({text: 'whiteBright'})`${getCurrentWorkingDir()}>`, shell) // TODO AR "You are currently in ....
 
 /**
  * @param {module:readline/promises.Interface} shell

@@ -1,4 +1,5 @@
 import os from 'node:os';
+import {styleText} from 'node:util';
 import {pipeWith, tap} from '#fp-utils';
 
 
@@ -8,7 +9,7 @@ import {pipeWith, tap} from '#fp-utils';
  */
 const concat = (str) => (prevStr) => prevStr ? `${prevStr}${str}` : str;
 
-export const ansi = {
+const ansi = {
     reset: concat('\x1b[0m'),
     eol: concat(os.EOL),
     black: concat('\x1b[30m'),
@@ -50,19 +51,45 @@ export const ansi = {
 }
 
 /**
+ * @param {string} message
+ * @returns {void}
+ */
+export const log = (message) => {
+    pipeWith(message, console.log);
+}
+
+/**
+ * @param {object} [options]
+ * @param {string | string[]} [options.text]
+ * @param {string | string[]} [options.values]
+ * @returns {function(*, ...[*]): string}
+ */
+export const styledMsg = (options) => (strings, ...values) => {
+    const formatText = options?.text ?? 'white';
+    const formatValues = options?.values ?? formatText;
+    let result = "";
+    for (let i = 0; i < strings.length; i++) {
+        result += styleText(formatText, strings[i]);
+        if (i < values.length) {
+            result += styleText(formatValues, values[i])
+        }
+    }
+    return result;
+}
+
+/**
  * @param {string} text
  * @param {function(prev:string=):string} [ansi]
  * @return {(string)=>string}
  */
-export const ttyText = (text, ansi = undefined) => concat(ansi ? `${ansi()}${text}` : text);
+export const ttyMsg = (text, ansi = undefined) => concat(ansi ? `${ansi()}${text}` : text);
 
 /**
  * @param {...(string)=>string} parts
  * @return {void}
  */
-export const logText = (...parts) => {
+export const logParts = (...parts) => {
     pipeWith(null, ...parts, ansi.reset, console.log)
 }
 
-export const logDebug = tap((...args) => console.log(ansi.bgGrey(), "~~~~", ...args, ansi.reset()));
-
+export const logDebug = tap((...args) => console.log(ansi.bgGrey(), "~~~~ ", ...args, ansi.reset()));
