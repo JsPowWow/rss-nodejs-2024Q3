@@ -1,19 +1,15 @@
 import os from 'node:os';
-import {isCmdLineInputOf} from '#shell-command-utils';
+import {isCmdLineInputOf, outputMsg} from '#shell-command-utils';
 import {getCmdArgsValues, parseCmdLine} from '#shell-utils';
 import {pipe, pipeAsyncWith} from '#fp-utils';
 import {InvalidInputError} from '#errors';
-import {styledMsg} from '#console-utils';
 
 const osDataInfos = {
-    EOL: styledMsg({text: 'cyan', values: 'yellowBright'})`EOL: ${JSON.stringify(os.EOL)}`,
-    cpus: styledMsg({
-        text: 'cyan',
-        values: 'yellowBright'
-    })`Total: ${os.cpus().length}\n${os.cpus().map((cpu) => (`${cpu.model}; clock rate: ${Math.round(cpu.speed / 100) / 10} GHz`)).join("\r\n")}`,
-    homedir: styledMsg({text: 'cyan', values: 'yellowBright'})`homedir: ${os.userInfo().homedir}`,
-    username: styledMsg({text: 'cyan', values: 'yellowBright'})`username: ${os.userInfo().username}`,
-    architecture: styledMsg({text: 'cyan', values: 'yellowBright'})`architecture: ${os.arch()}`,
+    EOL: outputMsg`EOL: ${JSON.stringify(os.EOL)}`,
+    cpus: outputMsg`Total: ${os.cpus().length}\n${os.cpus().map(cpu => outputMsg`CPU: ${cpu.model}; clock rate: ${Math.round(cpu.speed / 100) / 10}GHz`).join("\r\n")}`,
+    homedir: outputMsg`homedir: ${os.userInfo().homedir}`,
+    username: outputMsg`username: ${os.userInfo().username}`,
+    architecture: outputMsg`architecture: ${os.arch()}`,
 }
 
 /**
@@ -47,19 +43,16 @@ class OSCommand {
 
     description = `
     Operating system info (prints following information in console)
-     * Get EOL (default system End-Of-Line) and print it to console
-        os --EOL
-     * Get host machine CPUs info (overall amount of CPUS plus model and clock rate (in GHz) for each of them) and print it to console
-        os --cpus
-     * Get home directory and print it to console
-        os --homedir
-     * Get current system user name (Do not confuse with the username that is set when the application starts) and print it to console
-        os --username
-     * Get CPU architecture for which Node.js binary has compiled and print it to console
-        os --architecture
+     * os --EOL Get EOL (default system End-Of-Line) and print it to console
+     * os --cpus Get host machine CPUs info (overall amount of CPUS plus model and clock rate (in GHz) for each of them) and print it to console
+     * os --homedir Get home directory and print it to console
+     * os --username Get current system user name (Do not confuse with the username that is set when the application starts) and print it to console
+     * os --architecture Get CPU architecture for which Node.js binary has compiled and print it to console
     `;
 
     execute(ctx) {
+        // TODO AR >os without flags command (?)
+        // TODO AR >os --cpus - why clock rate is zero(?)
         return parseInput(ctx).then(pipe(getOsInfoPerArgs, (message) => Promise.resolve({
             type: 'success',
             message: message

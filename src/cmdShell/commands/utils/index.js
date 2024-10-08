@@ -1,6 +1,7 @@
 import {pauseReadline} from '#readline-utils';
 import {tap} from '#fp-utils';
 import {InvalidInputError} from '#errors';
+import {styledMsg} from '#console-utils';
 
 /**
  * @param {Command} command
@@ -40,3 +41,5 @@ export const readlinePause = (ctx) => {
     pauseReadline(ctx.rl)
     return ctx;
 }
+
+export const outputMsg = styledMsg({text: 'cyan', values: 'yellowBright'})

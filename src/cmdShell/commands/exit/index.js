@@ -8,7 +8,7 @@ class ExitCommand {
 
     description = 'Finish program';
 
-    execute(ctx ) {
+    execute(ctx) {
         ctx.rl.close();
         return Promise.resolve(undefined);
     }

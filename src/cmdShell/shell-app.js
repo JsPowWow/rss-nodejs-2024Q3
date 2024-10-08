@@ -9,7 +9,7 @@ import {
     getHomeDir,
     processExit
 } from '#shell-utils';
-import {executeCommand, findMatchCommand, readlinePause} from '#shell-command-utils';
+import {executeCommand, findMatchCommand, outputMsg, readlinePause} from '#shell-command-utils';
 import {commands} from '#shell-commands';
 import {isInstanceOf} from '#common-utils';
 import {InvalidInputError} from '#errors';
@@ -28,7 +28,7 @@ const getUserName = () => argsMap[USERNAME] ?? getCurrentUserName(); // TODO AR 
  * @returns {void}
  */
 const sayGreetings = userName => {
-    log(styledMsg({text: 'blue', values: 'yellowBright'})`Welcome to the File Manager, ${userName}!`);
+    log(outputMsg`Welcome to the File Manager, ${userName}!`);
 }
 
 
@@ -36,7 +36,7 @@ const sayGreetings = userName => {
  * @returns {void}
  */
 const logCurrentWorkingDir = () => {
-    log(styledMsg({text: 'gray', values: ['yellowBright', 'italic']})`You are currently in ${getCurrentWorkingDir()}!`)
+    log(outputMsg`You are currently in ${getCurrentWorkingDir()}!`)
 }
 
 /**
@@ -44,7 +44,7 @@ const logCurrentWorkingDir = () => {
  * @returns {void}
  */
 const sayGoodByeAndThankYou = userName => {
-    log(styledMsg({text: 'blue', values: 'yellowBright'})`\nThank you for using File Manager, ${userName}, goodbye!`)
+    log(outputMsg`\nThank you for using File Manager, ${userName}, goodbye!`)
 }
 
 /**
@@ -52,9 +52,9 @@ const sayGoodByeAndThankYou = userName => {
  */
 const printError = (err) => {
     if (isInstanceOf(InvalidInputError, err)) {
-        return log(styledMsg({text: 'red', values: 'yellowBright'})`Invalid input: ${err.input} ${err.cause?.message}`)
+        return log(outputMsg`Invalid input: ${err.input} ${err.cause?.message}`)
     }
-    return log(styledMsg({text: 'red', values: 'yellowBright'})`Error: ${err.message}`)
+    return log(outputMsg`Error: ${err.message}`)
 }
 
 /**

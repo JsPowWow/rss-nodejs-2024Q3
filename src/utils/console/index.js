@@ -76,6 +76,7 @@ export const styledMsg = (options) => (strings, ...values) => {
     }
     return result;
 }
+
 /**
  * @param {string} text
  * @param {function(prev:string=):string} [ansi]
