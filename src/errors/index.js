@@ -1,11 +1,22 @@
-export class UnrecognizedCommandError extends Error {
-    static throw() {
-        throw new UnrecognizedCommandError();
+export class InvalidInputError extends Error {
+    static throw(input = '') {
+        throw new InvalidInputError(input);
     }
 
-    static MESSAGE = 'Unrecognized command';
+    static reThrow = (input = '') => (err) => {
+        const invalidInputError = new InvalidInputError(input);
+        invalidInputError.cause = err;
+        throw invalidInputError;
+    }
 
-    constructor(message = UnrecognizedCommandError.MESSAGE) {
-        super(message);
+    #input = ''
+
+    constructor(input = '') {
+        super(`Invalid input: ${input}`);
+        this.#input = input;
+    }
+
+    get input() {
+        return this.#input;
     }
 }

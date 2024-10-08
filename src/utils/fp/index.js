@@ -59,6 +59,16 @@ export function pipe(...fns) {
 }
 
 /**
+ * @function pipeAsync
+ * @description An async function pipeline to apply over a given value
+ * @param {...Function} fns The async functions chain when a value is provided
+ * @returns {function(*=): Promise<*>} The function where the value to call the pipeline on is provided
+ */
+export function pipeAsync(...fns) {
+    return init => fns.reduce((p, fn) => p.then(fn), Promise.resolve(init));
+}
+
+/**
  * @function pipeWith
  * @description A function to apply a pipeline of functions to a given value
  * @param {*} init The value to apply the pipeline to
@@ -67,6 +77,17 @@ export function pipe(...fns) {
  */
 export function pipeWith(init, ...fns) {
     return pipe(...fns)(isFn(init) ? init() : init);
+}
+
+/**
+ * @function pipeAsyncWith
+ * @description A function to apply a pipeline of async functions to a given value
+ * @param {*} init The value to apply the pipeline to
+ * @param {...Function} fns The async functions to call when a value is provided
+ * @returns {Promise<*>} The result of the pipeline
+ */
+export function pipeAsyncWith(init, ...fns) {
+    return pipeAsync(...fns)(isFn(init) ? init() : init);
 }
 
 /**
@@ -79,6 +100,22 @@ export function tap(tapFn) {
 
     return function passThrough(...args) {
         tapFn(...args);
+        return args.length === 1
+            ? args.shift()
+            : [...args];
+    }
+}
+
+/**
+ * @function tapAsync
+ * @param {Function} tapFn
+ * @return {function(...[*]): Promise<*>}
+ */
+export function tapAsync(tapFn) {
+    assertIsFunction(tapFn);
+
+    return async function passThrough(...args) {
+        await tapFn(...args);
         return args.length === 1
             ? args.shift()
             : [...args];

@@ -1,6 +1,6 @@
-import {closeReadline, createReadline, setReadlinePrompt} from '#readline-utils';
+import {closeReadline, createReadline, resumeReadline, setReadlinePrompt} from '#readline-utils';
 import {log, styledMsg} from '#console-utils';
-import {IO, pipe, tap} from '#fp-utils';
+import {IO, pipe, pipeAsyncWith, tap} from '#fp-utils';
 import {
     changeDir,
     getCmdArgsValues,
@@ -9,10 +9,14 @@ import {
     getHomeDir,
     processExit
 } from '#shell-utils';
-import {commands} from "#shell-commands"
+import {executeCommand, findMatchCommand, readlinePause} from '#shell-command-utils';
+import {commands} from '#shell-commands';
+import {isInstanceOf} from '#common-utils';
+import {InvalidInputError} from '#errors';
+import process from 'node:process';
 
 const USERNAME = "username"
-const argsMap = getCmdArgsValues(USERNAME);
+const argsMap = getCmdArgsValues({name: USERNAME, type: 'string', default: ''})(process.argv.slice(2));
 
 /**
  * @return {string}
@@ -40,43 +44,60 @@ const logCurrentWorkingDir = () => {
  * @returns {void}
  */
 const sayGoodByeAndThankYou = userName => {
-    log(styledMsg({text: 'blue', values: 'yellowBright'})`\n\nThank you for using File Manager, ${userName}, goodbye!`)
+    log(styledMsg({text: 'blue', values: 'yellowBright'})`\nThank you for using File Manager, ${userName}, goodbye!`)
 }
 
 /**
- * @param {module:readline/promises.Interface} shell
+ * @param {unknown} err
  */
-const prompt = shell => setReadlinePrompt(styledMsg({text: 'whiteBright'})`${getCurrentWorkingDir()}>`, shell) // TODO AR "You are currently in ....
+const printError = (err) => {
+    if (isInstanceOf(InvalidInputError, err)) {
+        return log(styledMsg({text: 'red', values: 'yellowBright'})`Invalid input: ${err.input} ${err.cause?.message}`)
+    }
+    return log(styledMsg({text: 'red', values: 'yellowBright'})`Error: ${err.message}`)
+}
 
 /**
- * @param {module:readline/promises.Interface} shell
+ * @param {CmdResult} res
  */
-const handleCloseIntent = shell => shell.on('SIGINT', IO.pipeWith(shell, closeReadline));
+const printCommandResult = (res) => {
+    if (Array.isArray(res.message)) {
+        return log(res.message.join("\n"))
+    }
+    return log(res.message);
+}
 
 /**
- * @param {module:readline/promises.Interface} shell
+ * @param {module:readline/promises.Interface} rl
  */
-const handleClose = shell => shell.on('close', pipe(getUserName, sayGoodByeAndThankYou, processExit(0)));
+const prompt = rl => setReadlinePrompt(styledMsg({text: 'whiteBright'})`${getCurrentWorkingDir()}>`, rl) // TODO AR "You are currently in ....
 
 /**
- * @param {module:readline/promises.Interface} shell
+ * @param {module:readline/promises.Interface} rl
  */
-const handleInputLine = shell => {
-    return shell.on('line', line => {
-        const command = commands[line];
-        // TODO AR exec command(s)
-        command
-            ? console.log(`find - ${command.name}`)
-            : console.log(`unknown ${line}`)
+const handleCloseIntent = rl => rl.on('SIGINT', IO.pipeWith(rl, closeReadline));
 
-        prompt(shell);
-    });
+/**
+ * @param {module:readline/promises.Interface} rl
+ */
+const handleClose = rl => rl.on('close', pipe(getUserName, sayGoodByeAndThankYou, processExit(0)));
+
+/**
+ * @param {module:readline/promises.Interface} rl
+ */
+const handleInputLine = (rl) => {
+    return rl.on('line', input =>
+        input ? pipeAsyncWith({rl, input},
+            readlinePause, findMatchCommand(commands), executeCommand)
+            .then(printCommandResult)
+            .catch(printError)
+            .finally(IO.pipeWith(rl, resumeReadline, prompt)) : prompt(rl));
 };
 
 export const createShell = IO.pipeWith(
     createReadline(),
     tap(pipe(getHomeDir, changeDir)), // go to user home directory
     tap(pipe(getUserName, sayGreetings, logCurrentWorkingDir)), // welcome
-    pipe(handleInputLine, handleCloseIntent, handleClose), // shell events subscriptions
+    pipe(handleInputLine, handleCloseIntent, handleClose), // rl events subscriptions
     prompt
 );

@@ -7,6 +7,18 @@ export const createReadline = () => readline.createInterface({input: process.std
 
 /**
  * @param {module:readline/promises.Interface} rl
+ * @return {module:readline/promises.Interface}
+ */
+export const pauseReadline = (rl) => rl.pause();
+
+/**
+ * @param {module:readline/promises.Interface} rl
+ * @return {module:readline/promises.Interface}
+ */
+export const resumeReadline = (rl) => rl.resume();
+
+/**
+ * @param {module:readline/promises.Interface} rl
  * @return {void}
  */
 export const closeReadline = (rl) => rl.close();

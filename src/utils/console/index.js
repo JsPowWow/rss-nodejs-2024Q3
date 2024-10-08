@@ -69,14 +69,13 @@ export const styledMsg = (options) => (strings, ...values) => {
     const formatValues = options?.values ?? formatText;
     let result = "";
     for (let i = 0; i < strings.length; i++) {
-        result += styleText(formatText, strings[i]);
+        result += styleText(formatText, String(strings[i] ?? ""));
         if (i < values.length) {
-            result += styleText(formatValues, values[i])
+            result += styleText(formatValues, String(values[i] ?? ""))
         }
     }
     return result;
 }
-
 /**
  * @param {string} text
  * @param {function(prev:string=):string} [ansi]

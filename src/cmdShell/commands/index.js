@@ -1,7 +1,8 @@
-import {default as ls} from "./ls/index.js";
 import {default as exit} from "./exit/index.js";
+import {default as os} from "./os/index.js";
 
+/** @type {CommandsConfig} */
 export const commands = Object.freeze({
-    [exit.name] : exit,
-    [ls.name] : ls,
-})
+    [exit.cmd]: exit,
+    [os.cmd]: os,
+});

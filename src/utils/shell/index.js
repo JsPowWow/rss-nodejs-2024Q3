@@ -9,17 +9,17 @@ import {parseArgs} from 'node:util';
 export const processExit = code => () => process.exit(code);
 
 /**
- * @param {...string} argNames
- * @return {object}
+ * @param {...{name: string, type: 'string' | 'boolean', default: *}} argsOptions
+ * @return {function(string[]):object}
  */
-export const getCmdArgsValues = (...argNames) => {
-    const {values} = parseArgs({
-        strict: false,
-        args: process.argv.slice(2),
-        options: Object.fromEntries(argNames.map((arg) => ([[arg], {type: 'string', default: ''}])))
-    });
-    return values;
-};
+export const getCmdArgsValues = (...argsOptions) => (args) =>
+    parseArgs({
+        args,
+        strict: true,
+        options: Object
+            .fromEntries(argsOptions
+                .map((arg, idx) => ([[arg.name], argsOptions[idx]])))
+    }).values;
 
 /**
  * @param {string} input
