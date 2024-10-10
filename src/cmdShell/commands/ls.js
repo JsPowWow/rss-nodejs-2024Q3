@@ -1,7 +1,7 @@
 import {readdir} from 'node:fs/promises'
 import path from 'node:path'
 
-import {getCurrentWorkingDir, parseCmdLine, withCmdArgsValues} from '#shell-utils';
+import {assertNoPositionals, getCurrentWorkingDir, parseCmdLine, withCmdArgsValues} from '#shell-utils';
 import {Nothing, pipeAsyncWith} from '#fp-utils';
 import {InvalidInputError, OperationFailedError} from '#shell-errors';
 import {output2Msg, outputMsg} from '#shell-messages';
@@ -13,7 +13,7 @@ const COMMAND_DESCRIPTION = outputMsg`Print in console list of all files and fol
 
 /**
  * @param {CmdExecContext} ctx
- * @returns {Promise<object>}
+ * @returns {Promise<ParsedArgs>}
  */
 const parseInput = ctx =>
     pipeAsyncWith(parseCmdLine(ctx.input).slice(1),
@@ -61,10 +61,12 @@ export default class LSCommand {
      * @returns {AsyncGenerator<CmdResult, void, *>}
      */
     async* execute(ctx) {
-        const args = await parseInput(ctx);
+        const {values: args, positionals} = await parseInput(ctx);
         ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: args} : Nothing;
 
-        if (args.help) {
+        assertNoPositionals(positionals.slice(1));
+
+        if (args['help']) {
             ctx.output(outputMsg`${LSCommand.description}`)
             return;
         }

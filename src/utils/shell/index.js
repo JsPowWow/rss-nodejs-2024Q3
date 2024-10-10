@@ -1,6 +1,7 @@
 import process from 'node:process';
 import os from 'node:os';
 import {parseArgs} from 'node:util';
+import {InvalidInputError} from '#shell-errors';
 
 /**
  * @param {number} code
@@ -10,16 +11,33 @@ export const processExit = code => () => process.exit(code);
 
 /**
  * @param {...{name: string, type: 'string' | 'boolean', default: *}} argsOptions
- * @return {function(string[]):object}
+ * @return {function(string[]): ParsedArgs}
  */
-export const withCmdArgsValues = (...argsOptions) => (args) =>
-    parseArgs({
+export const withCmdArgsValues = (...argsOptions) => (args) => {
+    const {values, positionals, tokens} = parseArgs({
         args,
-        strict: false,
+        strict: true,
         allowPositionals: true,
         options: Object.fromEntries(argsOptions
             .map((arg, i) => ([[arg.name], argsOptions[i]])))
-    }).values;
+    });
+
+    return {
+        values,
+        positionals: positionals.filter(Boolean),
+        tokens
+    }
+};
+
+/**
+ * @param {string[]} positionals
+ */
+export function assertNoPositionals(positionals) {
+    if (positionals?.length > 0) {
+        InvalidInputError.throw(positionals?.join(" "));
+    }
+
+}
 
 /**
  * @param {string} input

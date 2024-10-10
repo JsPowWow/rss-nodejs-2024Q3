@@ -1,4 +1,10 @@
-import { Interface } from "readline/promises"
+import {Interface} from "readline/promises"
+
+export type ParsedArgs = {
+    values: object;
+    positionals: string[];
+    tokens?: object;
+};
 
 export interface Command {
     execute(ctx: CmdExecContext): AsyncGenerator<CmdResult>;

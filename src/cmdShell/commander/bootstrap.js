@@ -19,7 +19,12 @@ export default class Bootstrap {
 
     constructor() {
         try {
-            this.#argsMap = withCmdArgsValues({name: ARG_USERNAME, type: 'string', default: ''})(process.argv.slice(2));
+            const {values} = withCmdArgsValues({
+                name: ARG_USERNAME,
+                type: 'string',
+                default: ''
+            })(process.argv.slice(2));
+            this.#argsMap = values;
             this.#username = this.#argsMap[ARG_USERNAME];
             if (!this.#username) {
                 InvalidInputError.throw("Missing --username option");

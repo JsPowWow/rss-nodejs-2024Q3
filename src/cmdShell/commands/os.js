@@ -1,5 +1,5 @@
 import os from 'node:os';
-import {parseCmdLine, withCmdArgsValues} from '#shell-utils';
+import {assertNoPositionals, parseCmdLine, withCmdArgsValues} from '#shell-utils';
 import {Nothing, pipeAsyncWith} from '#fp-utils';
 import {InvalidInputError} from '#shell-errors';
 import {missingInputOperandsMsg, outputMsg} from '#shell-messages';
@@ -22,7 +22,7 @@ const outputPerArgsInfos = {
 
 /**
  * @param {CmdExecContext} ctx
- * @returns {Promise<object>}
+ * @returns {Promise<ParsedArgs>}
  */
 const parseInput = ctx =>
     pipeAsyncWith(parseCmdLine(ctx.input).slice(1),
@@ -54,8 +54,11 @@ export default class OSCommand {
      * @returns {AsyncGenerator<CmdResult, void, *>}
      */
     async* execute(ctx) {
-        const args = await parseInput(ctx);
+        const {values: args, positionals} = await parseInput(ctx);
         ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: args} : Nothing;
+
+        assertNoPositionals(positionals.slice(1));
+
         const requestedOutput = getOutputInfoByArgs(args);
         ctx.debug ? yield {type: 'debug', message: 'requested OS Infos', data: requestedOutput} : Nothing;
         ctx.output(requestedOutput.length
