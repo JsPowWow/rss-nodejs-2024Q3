@@ -1,3 +1,5 @@
+import {isNil} from '#common-utils';
+
 /**
  * @function isFn
  * @description Check if provided value is some callable function
@@ -131,4 +133,70 @@ export const IO = {
      * @returns {function(): *} The IO function with result of the pipeline
      */
     pipeWith: (value, ...fns) => () => pipeWith(value, ...fns),
+}
+
+class Some {
+    constructor(value) {
+        this.value = value;
+    }
+
+    map = fn => {
+        return new Some(fn(this.value));
+    }
+
+    chain = fn => {
+        return fn(this.value);
+    }
+
+    getOrElse = (defaultValue) => {
+        return this.value;
+    }
+
+    /**
+     * @param {object} options
+     * @param {function(*):*} options.some
+     * @param {function():*} options.nothing
+     * @returns {*}
+     */
+    matchWith = (options) => {
+        return options.some(this.value);
+    }
+
+    get [Symbol.toStringTag]() {
+        return `Some ${String(this.value)}`;
+    }
+}
+
+export const Nothing = Object.freeze(new class None {
+    map = (fn) => {
+        return this;
+    }
+
+    chain = (fn) => {
+        return this;
+    }
+
+    getOrElse = (defaultValue) => {
+        return defaultValue;
+    }
+
+    /**
+     * @param {object} options
+     * @param {function(*):*} options.some
+     * @param {function():*} options.nothing
+     * @returns {*}
+     */
+    matchWith = (options) => {
+        return options.nothing();
+    }
+
+    get [Symbol.toStringTag]() {
+        return "Nothing";
+    }
+});
+
+export const Maybe = {
+    of: (value) => isNil(value) || value === Nothing
+        ? Nothing
+        : new Some(value),
 }

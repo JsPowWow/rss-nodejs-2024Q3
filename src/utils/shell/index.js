@@ -12,13 +12,13 @@ export const processExit = code => () => process.exit(code);
  * @param {...{name: string, type: 'string' | 'boolean', default: *}} argsOptions
  * @return {function(string[]):object}
  */
-export const getCmdArgsValues = (...argsOptions) => (args) =>
+export const withCmdArgsValues = (...argsOptions) => (args) =>
     parseArgs({
         args,
-        strict: true,
-        options: Object
-            .fromEntries(argsOptions
-                .map((arg, idx) => ([[arg.name], argsOptions[idx]])))
+        strict: false,
+        allowPositionals: true,
+        options: Object.fromEntries(argsOptions
+            .map((arg, i) => ([[arg.name], argsOptions[i]])))
     }).values;
 
 /**

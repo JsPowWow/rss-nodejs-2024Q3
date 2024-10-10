@@ -32,9 +32,10 @@
     "#readline-utils": "./src/utils/readline/index.js",
     "#shell-utils": "./src/utils/shell/index.js",
     "#fp-utils": "./src/utils/fp/index.js",
-    "#errors": "./src/errors/index.js",
-    "#shell": "./src/cmdShell/index.js",
-    "#shell-command-utils": "./src/cmdShell/commands/utils/index.js",
-    "#shell-commands": "./src/cmdShell/commands/index.js"
+    "#shell-messages": "./src/cmdShell/messages/index.js",
+    "#shell-errors": "./src/cmdShell/errors/index.js",
+    "#shell-commander": "./src/cmdShell/commander/index.js",
+    "#shell-commands/*": "./src/cmdShell/commands/*",
+    "#shell": "./src/cmdShell/index.js"
   }
 }

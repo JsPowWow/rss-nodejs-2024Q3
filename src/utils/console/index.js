@@ -1,6 +1,6 @@
 import os from 'node:os';
 import {styleText} from 'node:util';
-import {pipeWith, tap} from '#fp-utils';
+import {pipeWith} from '#fp-utils';
 
 
 /**
@@ -9,7 +9,7 @@ import {pipeWith, tap} from '#fp-utils';
  */
 const concat = (str) => (prevStr) => prevStr ? `${prevStr}${str}` : str;
 
-const ansi = {
+export const ansi = Object.freeze({
     reset: concat('\x1b[0m'),
     eol: concat(os.EOL),
     black: concat('\x1b[30m'),
@@ -48,7 +48,7 @@ const ansi = {
     bgBrightWhite: concat('\x1b[107m'),
     rgb: (r, g, b) => concat(`\x1b[38;2;${r};${g};${b}m`),
     bgRgb: (r, g, b) => concat(`\x1b[48;2;${r};${g};${b}m`),
-}
+});
 
 /**
  * @param {string} message
@@ -91,5 +91,3 @@ export const ttyMsg = (text, ansi = undefined) => concat(ansi ? `${ansi()}${text
 export const logParts = (...parts) => {
     pipeWith(null, ...parts, ansi.reset, console.log)
 }
-
-export const logDebug = tap((...args) => console.log(ansi.bgGrey(), "~~~~ ", ...args, ansi.reset()));
