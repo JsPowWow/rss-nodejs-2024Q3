@@ -140,6 +140,10 @@ class Some {
         this.value = value;
     }
 
+    get [Symbol.toStringTag]() {
+        return `Some ${String(this.value)}`;
+    }
+
     map = fn => {
         return new Some(fn(this.value));
     }
@@ -161,13 +165,13 @@ class Some {
     matchWith = (options) => {
         return options.some(this.value);
     }
-
-    get [Symbol.toStringTag]() {
-        return `Some ${String(this.value)}`;
-    }
 }
 
 export const Nothing = Object.freeze(new class None {
+    get [Symbol.toStringTag]() {
+        return "Nothing";
+    }
+
     map = (fn) => {
         return this;
     }
@@ -188,10 +192,6 @@ export const Nothing = Object.freeze(new class None {
      */
     matchWith = (options) => {
         return options.nothing();
-    }
-
-    get [Symbol.toStringTag]() {
-        return "Nothing";
     }
 });
 

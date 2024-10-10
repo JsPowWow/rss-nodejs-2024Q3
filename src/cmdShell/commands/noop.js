@@ -10,16 +10,16 @@ class NoopCommand {
 
     static description = COMMAND_DESCRIPTION;
 
+    get [Symbol.toStringTag]() {
+        return `NoopCommand::(${NoopCommand.command})`;
+    }
+
     /**
      * @param {CmdExecContext} _ctx
      * @returns {AsyncGenerator<CmdResult, void, *>}
      */
     async* execute(_ctx) {
         yield {type: 'debug', message: 'noop command in action'};
-    }
-
-    get [Symbol.toStringTag]() {
-        return `NoopCommand::(${NoopCommand.command})`;
     }
 }
 

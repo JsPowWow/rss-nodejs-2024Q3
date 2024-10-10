@@ -1,7 +1,7 @@
 import {readdir} from 'node:fs/promises'
 import path from 'node:path'
 
-import {assertNoPositionals, getCurrentWorkingDir, parseCmdLine, withCmdArgsValues} from '#shell-utils';
+import {assertNoExtraPositionals, getCurrentWorkingDir, parseCmdLine, withCmdArgsValues} from '#shell-utils';
 import {Nothing, pipeAsyncWith} from '#fp-utils';
 import {InvalidInputError, OperationFailedError} from '#shell-errors';
 import {output2Msg, outputMsg} from '#shell-messages';
@@ -56,6 +56,10 @@ export default class LSCommand {
 
     static description = COMMAND_DESCRIPTION;
 
+    get [Symbol.toStringTag]() {
+        return `LSCommand::(${LSCommand.command})`;
+    }
+
     /**
      * @param {CmdExecContext} ctx
      * @returns {AsyncGenerator<CmdResult, void, *>}
@@ -64,7 +68,7 @@ export default class LSCommand {
         const {values: args, positionals} = await parseInput(ctx);
         ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: args} : Nothing;
 
-        assertNoPositionals(positionals.slice(1));
+        assertNoExtraPositionals(LSCommand.command, positionals);
 
         if (args['help']) {
             ctx.output(outputMsg`${LSCommand.description}`)
@@ -85,9 +89,5 @@ export default class LSCommand {
                 .map(toOutputString).join('\n'));
 
         yield {type: 'debug', message: 'finished', data: this};
-    }
-
-    get [Symbol.toStringTag]() {
-        return `LSCommand::(${LSCommand.command})`;
     }
 }

@@ -1,5 +1,5 @@
 import os from 'node:os';
-import {assertNoPositionals, parseCmdLine, withCmdArgsValues} from '#shell-utils';
+import {assertNoExtraPositionals, parseCmdLine, withCmdArgsValues} from '#shell-utils';
 import {Nothing, pipeAsyncWith} from '#fp-utils';
 import {InvalidInputError} from '#shell-errors';
 import {missingInputOperandsMsg, outputMsg} from '#shell-messages';
@@ -49,6 +49,10 @@ export default class OSCommand {
 
     static description = COMMAND_DESCRIPTION;
 
+    get [Symbol.toStringTag]() {
+        return `OSCommand::(${OSCommand.command})`;
+    }
+
     /**
      * @param {CmdExecContext} ctx
      * @returns {AsyncGenerator<CmdResult, void, *>}
@@ -57,7 +61,7 @@ export default class OSCommand {
         const {values: args, positionals} = await parseInput(ctx);
         ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: args} : Nothing;
 
-        assertNoPositionals(positionals.slice(1));
+        assertNoExtraPositionals(OSCommand.command, positionals);
 
         const requestedOutput = getOutputInfoByArgs(args);
         ctx.debug ? yield {type: 'debug', message: 'requested OS Infos', data: requestedOutput} : Nothing;
@@ -65,9 +69,5 @@ export default class OSCommand {
             ? requestedOutput.join('\n')
             : missingInputOperandsMsg(OSCommand.command));
         yield {type: 'debug', message: 'finished', data: this};
-    }
-
-    get [Symbol.toStringTag]() {
-        return `OSCommand::(${OSCommand.command})`;
     }
 }

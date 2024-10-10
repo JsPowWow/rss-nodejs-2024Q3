@@ -10,6 +10,10 @@ export default class ExitCommand {
 
     static description = COMMAND_DESCRIPTION;
 
+    get [Symbol.toStringTag]() {
+        return `ExitCommand::(${ExitCommand.command})`;
+    }
+
     /**
      * @param {CmdExecContext} ctx
      * @returns {AsyncGenerator<CmdResult, void, *>}
@@ -17,9 +21,5 @@ export default class ExitCommand {
     async* execute(ctx) {
         ctx.rl.close();
         yield {type: 'debug', message: 'finished'};
-    }
-
-    get [Symbol.toStringTag]() {
-        return `ExitCommand::(${ExitCommand.command})`;
     }
 }
