@@ -19,7 +19,7 @@ class NoopCommand {
     }
 
     get [Symbol.toStringTag]() {
-        return 'NoopCommand::(no-operation)';
+        return `NoopCommand::(${NoopCommand.command})`;
     }
 }
 

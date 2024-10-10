@@ -3,9 +3,10 @@ import {tap} from '#fp-utils';
 import {InvalidInputError} from '#shell-errors';
 import {getCurrentWorkingDir} from '#shell-utils';
 
-export const outputMsg = styledMsg({text: 'cyan', values: 'yellowBright'})
-export const warningMsg = styledMsg({text: ['yellow', 'italic'], values: ['yellowBright', 'italic']})
-export const errorMsg = styledMsg({text: ['red', 'bold', 'italic'], values: ['yellow', 'italic']})
+export const outputMsg = styledMsg({text: 'cyan', values: 'yellowBright'});
+export const output2Msg = styledMsg({text: 'magenta'});
+export const warningMsg = styledMsg({text: ['yellow', 'italic'], values: ['yellowBright', 'italic']});
+export const errorMsg = styledMsg({text: ['red', 'bold', 'italic'], values: ['yellow', 'italic']});
 export const shellPromptMsg = styledMsg({text: 'whiteBright'});
 
 export const logDebug = (...args) => console.log(ansi.bgGrey(), "~~~~ ", ...args, ansi.reset());

@@ -18,3 +18,22 @@ export class InvalidInputError extends Error {
         throw invalidInputError;
     }
 }
+
+
+export class OperationFailedError extends Error {
+    static MESSAGE = 'Operation failed';
+
+    constructor(message = '') {
+        super(`${OperationFailedError.MESSAGE}: ${message}`);
+    }
+
+    static throw(message = '') {
+        throw new OperationFailedError(message);
+    }
+
+    static reThrowWith = (err) => {
+        const invalidOperationError = new OperationFailedError();
+        invalidOperationError.cause = err;
+        throw invalidOperationError;
+    }
+}

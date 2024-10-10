@@ -5,7 +5,7 @@ import {noopCommand} from '#shell-commands/noop.js';
 import {logCurrentWorkingDir, logDebug, shellPromptMsg} from '#shell-messages';
 import {log} from '#console-utils';
 import {identity} from '#common-utils';
-import {changeDir, getCurrentWorkingDir, getHomeDir, processExit} from '#shell-utils';
+import {changeDir, getCurrentWorkingDir, getHomeDir, parseCmdLine, processExit} from '#shell-utils';
 import Bootstrap from './bootstrap.js';
 
 const bootstrap = new Bootstrap();
@@ -13,7 +13,7 @@ const bootstrap = new Bootstrap();
 /**
  * @param {module:readline/promises.Interface} rl
  */
-const readlinePrompt = rl => setReadlinePrompt(shellPromptMsg`${getCurrentWorkingDir()}>`, rl); // TODO AR "You are currently in ....
+const readlinePrompt = rl => setReadlinePrompt(shellPromptMsg`${getCurrentWorkingDir()}>`, rl);
 
 /**
  * @param {module:readline/promises.Interface} rl
@@ -47,7 +47,7 @@ const getCommand = config => ctx =>
     Object.assign(ctx, {
         command: Maybe.of(Object
             .entries(config)
-            .find(([key, command]) => command && ctx.input.trim().startsWith(key))?.[1]?.factory).matchWith({
+            .find(([key, cmd]) => cmd && parseCmdLine(ctx.input.trim()).filter(Boolean)[0] === key)?.[1]?.factory).matchWith({
             some: factory => factory(),
             nothing: () => ctx.input.trim()
                 ? InvalidInputError.throw(ctx.input)
@@ -91,7 +91,7 @@ const handleInputLineWith = options => rl => {
             tap(() => pauseReadline(rl)),
             getCommand(options.commandsConfig), executeCommand)
             .catch(options.onError)
-            .finally(IO.pipeWith(rl, resumeReadline, readlinePrompt)));
+            .finally(IO.pipeWith(rl, resumeReadline, tap(logCurrentWorkingDir), readlinePrompt)));
 };
 
 /**

@@ -6,14 +6,16 @@ import {errorMsg, outputMsg} from "#shell-messages";
 import ExitCommand from "#shell-commands/exit.js";
 import OsCommand from "#shell-commands/os.js";
 import {isInstanceOf} from '#common-utils';
-import {InvalidInputError} from '#shell-errors';
+import {InvalidInputError, OperationFailedError} from '#shell-errors';
+import LSCommand from '#shell-commands/ls.js';
 
 const DEBUG = false;
 
 /** @type {CommandsConfig} */
 const cmdConfig = Object.freeze({
     [ExitCommand.command]: {factory: () => new ExitCommand(), description: ExitCommand.description},
-    [OsCommand.command]: {factory: () => new OsCommand(), description: OsCommand.description}
+    [OsCommand.command]: {factory: () => new OsCommand(), description: OsCommand.description},
+    [LSCommand.command]: {factory: () => new LSCommand(), description: LSCommand.description},
 });
 
 /**
@@ -39,6 +41,10 @@ const printError = (err) => {
     if (isInstanceOf(InvalidInputError, err)) {
         return log(errorMsg`Invalid input: ${err.input} ${err.cause?.message}`)
     }
+    if (isInstanceOf(OperationFailedError, err)) {
+        return log(errorMsg`Operation failed: ${err.cause?.message}`)
+    }
+
     return log(errorMsg`Error: ${err.message}`)
 }
 

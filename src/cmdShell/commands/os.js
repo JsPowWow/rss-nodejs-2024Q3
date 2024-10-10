@@ -13,7 +13,7 @@ const COMMAND_DESCRIPTION = outputMsg`Operating system info (prints following in
 
 const outputPerArgsInfos = {
     EOL: outputMsg`EOL: ${JSON.stringify(os.EOL)}`,
-    cpus: outputMsg`Total: ${os.cpus().length}\n${os.cpus().map(cpu => outputMsg`CPU: ${cpu.model}; clock rate: ${Math.round(cpu.speed / 100) / 10}GHz`).join('\r\n')}`,
+    cpus: outputMsg`Overall amount: ${os.availableParallelism()}\n${os.cpus().map(cpu => outputMsg`CPU: ${cpu.model}; clock rate: ${Math.round(cpu.speed / 100) / 10}GHz`).join('\r\n')}`,
     homedir: outputMsg`homedir: ${os.userInfo().homedir}`,
     username: outputMsg`username: ${os.userInfo().username}`,
     architecture: outputMsg`architecture: ${os.arch()}`,
@@ -65,6 +65,6 @@ export default class OSCommand {
     }
 
     get [Symbol.toStringTag]() {
-        return 'OSCommand::(node:os)';
+        return `OSCommand::(${OSCommand.command})`;
     }
 }
