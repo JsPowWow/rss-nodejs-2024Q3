@@ -20,6 +20,6 @@ export default class ExitCommand {
     }
 
     get [Symbol.toStringTag]() {
-        return "ExitCommand::(process-exit)";
+        return 'ExitCommand::(process-exit)';
     }
 }
