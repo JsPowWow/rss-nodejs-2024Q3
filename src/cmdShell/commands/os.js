@@ -58,14 +58,14 @@ export default class OSCommand {
      * @returns {AsyncGenerator<CmdOperation, void, *>}
      */
     async* execute(ctx) {
-        const {values: args, positionals} = await parseInput(ctx);
-        ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: args} : Nothing;
+        const {values, positionals} = await parseInput(ctx);
+        ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: values} : Nothing;
 
-        assertNoExtraPositionals(OSCommand.command, positionals);
+        assertNoExtraPositionals(OSCommand.command, {values, positionals});
 
-        assertHasOptions(OSCommand.command, args);
+        assertHasOptions(OSCommand.command, {values, positionals});
 
-        const requestedOutput = getOutputInfoByArgs(args);
+        const requestedOutput = getOutputInfoByArgs(values);
         ctx.debug ? yield {type: 'debug', message: 'requested OS Infos', data: requestedOutput} : Nothing;
 
         return yield {type: 'success', message: ctx.input, data: requestedOutput.join('\n')};

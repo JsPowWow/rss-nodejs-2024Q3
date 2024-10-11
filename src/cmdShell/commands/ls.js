@@ -65,12 +65,12 @@ export default class LSCommand {
      * @returns {AsyncGenerator<CmdOperation, void, *>}
      */
     async* execute(ctx) {
-        const {values: args, positionals} = await parseInput(ctx);
-        ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: args} : Nothing;
+        const {values, positionals} = await parseInput(ctx);
+        ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: values} : Nothing;
 
-        assertNoExtraPositionals(LSCommand.command, positionals);
+        assertNoExtraPositionals(LSCommand.command, {values, positionals});
 
-        if (args['help']) {
+        if (values['help']) {
             return yield {type: 'success', message: ctx.input, data: outputMsg`${LSCommand.description}`};
         }
 

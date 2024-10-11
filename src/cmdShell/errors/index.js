@@ -41,11 +41,12 @@ export class OperationFailedError extends Error {
 }
 
 /**
- * @param {string} arg
- * @param {string[]} positionals
+ * @param {string} command
+ * @param {ParsedArgs} args
  */
-export function assertNoExtraPositionals(arg, positionals) {
-    const extraPositionals = positionals?.filter((p) => p !== arg) ?? [];
+export function assertNoExtraPositionals(command, args) {
+    const {positionals} = args;
+    const extraPositionals = positionals?.filter((p) => p !== command) ?? [];
     if (extraPositionals.length > 0) {
         InvalidInputError.throw(`Unknown param(s): ${positionals?.join(" ")}`);
     }
@@ -53,10 +54,30 @@ export function assertNoExtraPositionals(arg, positionals) {
 
 /**
  * @param {string} command
- * @param {object} args
+ * @param {number} expectedNum
+ * @param {ParsedArgs} args
+ */
+export function assertHasExpectedPositionalsNum(command, expectedNum, args) {
+    const {positionals, values} = args;
+    const extraPositionals = positionals?.filter((p) => p !== command) ?? [];
+    if (extraPositionals.length < expectedNum && !values['help']) {
+        InvalidInputError.throw(`Expect to have: ${expectedNum} param(s) provided.`);
+    }
+    if (values['help'] && extraPositionals.length > 0) {
+        InvalidInputError.throw(`Expect to have either --help or param(s) provided.`);
+    }
+    if (extraPositionals.length > expectedNum) {
+        InvalidInputError.throw(`Unknown param(s): ${positionals?.slice(expectedNum).join(" ")}`);
+    }
+}
+
+/**
+ * @param {string} command
+ * @param {ParsedArgs} args
  */
 export function assertHasOptions(command, args) {
-    if (Object.values(args).every((p) => p === false)) {
+    const {values} = args;
+    if (Object.values(values).every((p) => p === false)) {
         InvalidInputError.throw(missingInputOperandsMsg(command));
     }
 }

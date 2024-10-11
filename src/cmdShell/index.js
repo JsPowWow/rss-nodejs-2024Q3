@@ -8,6 +8,7 @@ import OsCommand from "#shell-commands/os.js";
 import {isInstanceOf} from '#common-utils';
 import {InvalidInputError, OperationFailedError} from '#shell-errors';
 import LSCommand from '#shell-commands/ls.js';
+import CDCommand from '#shell-commands/cd.js';
 
 const DEBUG = false;
 
@@ -16,6 +17,7 @@ const cmdConfig = Object.freeze({
     [ExitCommand.command]: {factory: () => new ExitCommand(), description: ExitCommand.description, debug: false},
     [OsCommand.command]: {factory: () => new OsCommand(), description: OsCommand.description, debug: false},
     [LSCommand.command]: {factory: () => new LSCommand(), description: LSCommand.description, debug: false},
+    [CDCommand.command]: {factory: () => new CDCommand(), description: CDCommand.description, debug: false}
 });
 
 /**
@@ -66,7 +68,7 @@ const printDebug = (result) => {
 }
 
 export const createShell = IO.pipeWith(
-    createReadline({history: Object.keys(cmdConfig)}),
+    createReadline({history: Object.keys(cmdConfig).map((cmd) => `${cmd} --help`)}),
     initializeCmdShellWith({
         commandsConfig: cmdConfig,
         onStart: sayGreetings,
