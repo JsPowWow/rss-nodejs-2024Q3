@@ -13,6 +13,7 @@ import UPCommand from '#shell-commands/up.js';
 import CatCommand from '#shell-commands/file/cat.js';
 import AddCommand from '#shell-commands/file/add.js';
 import RmCommand from '#shell-commands/file/rm.js';
+import HashCommand from '#shell-commands/file/hash.js';
 
 const DEBUG = false;
 
@@ -26,6 +27,7 @@ const cmdConfig = Object.freeze({
     [CatCommand.command]: {factory: () => new CatCommand(), description: CatCommand.description, debug: false},
     [AddCommand.command]: {factory: () => new AddCommand(), description: AddCommand.description, debug: false},
     [RmCommand.command]: {factory: () => new RmCommand(), description: RmCommand.description, debug: false},
+    [HashCommand.command]: {factory: () => new HashCommand(), description: HashCommand.description, debug: false},
 });
 
 /**
