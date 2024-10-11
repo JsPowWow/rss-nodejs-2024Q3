@@ -66,7 +66,7 @@ const printDebug = (result) => {
 }
 
 export const createShell = IO.pipeWith(
-    createReadline(),
+    createReadline({history: Object.keys(cmdConfig)}),
     initializeCmdShellWith({
         commandsConfig: cmdConfig,
         onStart: sayGreetings,

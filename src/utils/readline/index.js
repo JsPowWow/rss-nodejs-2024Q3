@@ -1,9 +1,15 @@
 import readline from 'node:readline/promises';
 
 /**
+ * @param {object} options
+ * @param {string[]} [options.history]
  * @return {module:readline/promises.Interface}
  */
-export const createReadline = () => readline.createInterface({input: process.stdin, output: process.stdout});
+export const createReadline = (options = undefined) => readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+    history: options?.history
+});
 
 /**
  * @param {module:readline/promises.Interface} rl

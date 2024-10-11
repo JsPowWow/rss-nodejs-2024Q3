@@ -1,8 +1,8 @@
 import os from 'node:os';
-import {assertNoExtraPositionals, parseCmdLine, withCmdArgsValues} from '#shell-utils';
+import {parseCmdLine, withCmdArgsValues} from '#shell-utils';
 import {Nothing, pipeAsyncWith} from '#fp-utils';
-import {InvalidInputError} from '#shell-errors';
-import {missingInputOperandsMsg, outputMsg} from '#shell-messages';
+import {assertHasOptions, assertNoExtraPositionals, InvalidInputError} from '#shell-errors';
+import {outputMsg} from '#shell-messages';
 
 const COMMAND_DESCRIPTION = outputMsg`Operating system info (prints following information in console)
     * ${'os --EOL'} Get EOL (default system End-Of-Line) and print it to console
@@ -63,13 +63,11 @@ export default class OSCommand {
 
         assertNoExtraPositionals(OSCommand.command, positionals);
 
+        assertHasOptions(OSCommand.command, args);
+
         const requestedOutput = getOutputInfoByArgs(args);
         ctx.debug ? yield {type: 'debug', message: 'requested OS Infos', data: requestedOutput} : Nothing;
 
-        return yield {
-            type: 'success', message: ctx.input, data: requestedOutput.length
-                ? requestedOutput.join('\n')
-                : missingInputOperandsMsg(OSCommand.command)
-        };
+        return yield {type: 'success', message: ctx.input, data: requestedOutput.join('\n')};
     }
 }

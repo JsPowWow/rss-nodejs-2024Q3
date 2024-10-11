@@ -1,7 +1,6 @@
 import process from 'node:process';
 import os from 'node:os';
 import {parseArgs} from 'node:util';
-import {InvalidInputError} from '#shell-errors';
 
 /**
  * @param {number} code
@@ -28,17 +27,6 @@ export const withCmdArgsValues = (...argsOptions) => (args) => {
         tokens
     }
 };
-
-/**
- * @param {string} arg
- * @param {string[]} positionals
- */
-export function assertNoExtraPositionals(arg, positionals) {
-    const extraPositionals = positionals?.filter((p) => p !== arg) ?? [];
-    if (extraPositionals.length > 0) {
-        InvalidInputError.throw(`Unknown param(s): ${positionals?.join(" ")}`);
-    }
-}
 
 /**
  * @param {string} input

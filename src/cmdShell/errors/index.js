@@ -1,3 +1,5 @@
+import {missingInputOperandsMsg} from '#shell-messages';
+
 export class InvalidInputError extends Error {
     static MESSAGE = 'Invalid input';
 
@@ -35,5 +37,26 @@ export class OperationFailedError extends Error {
         const invalidOperationError = new OperationFailedError();
         invalidOperationError.cause = err;
         throw invalidOperationError;
+    }
+}
+
+/**
+ * @param {string} arg
+ * @param {string[]} positionals
+ */
+export function assertNoExtraPositionals(arg, positionals) {
+    const extraPositionals = positionals?.filter((p) => p !== arg) ?? [];
+    if (extraPositionals.length > 0) {
+        InvalidInputError.throw(`Unknown param(s): ${positionals?.join(" ")}`);
+    }
+}
+
+/**
+ * @param {string} command
+ * @param {object} args
+ */
+export function assertHasOptions(command, args) {
+    if (Object.values(args).every((p) => p === false)) {
+        InvalidInputError.throw(missingInputOperandsMsg(command));
     }
 }

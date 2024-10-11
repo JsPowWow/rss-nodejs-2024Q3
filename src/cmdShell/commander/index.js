@@ -2,17 +2,22 @@ import {closeReadline, pauseReadline, resumeReadline, setReadlinePrompt} from '#
 import {IO, isFn, Maybe, pipe, pipeAsyncWith, tap} from '#fp-utils';
 import {InvalidInputError} from '#shell-errors';
 import {noopCommand} from '#shell-commands/noop.js';
-import {logCurrentWorkingDir, shellPromptMsg} from '#shell-messages';
+import {outputMsg, shellPromptMsg} from '#shell-messages';
 import {identity} from '#common-utils';
 import {changeDir, getCurrentWorkingDir, getHomeDir, parseCmdLine, processExit} from '#shell-utils';
 import Bootstrap from './bootstrap.js';
+import {log} from '#console-utils';
 
 const bootstrap = new Bootstrap();
 
 /**
  * @param {module:readline/promises.Interface} rl
  */
-const readlinePrompt = rl => setReadlinePrompt(shellPromptMsg`${getCurrentWorkingDir()}>`, rl);
+const readlinePrompt = rl => {
+    log(outputMsg`You are currently in ${getCurrentWorkingDir()}`);
+    setReadlinePrompt(shellPromptMsg`${getCurrentWorkingDir()}>`, rl);
+};
+
 
 /**
  * @param {module:readline/promises.Interface} rl
@@ -110,7 +115,7 @@ const handleInputLineWith = options => rl => {
             tap(() => pauseReadline(rl)),
             findConfigurableCommand(options.commandsConfig), executeCommand({...options, rl}))
             .catch(options.onError)
-            .finally(IO.pipeWith(rl, resumeReadline, tap(logCurrentWorkingDir), readlinePrompt)));
+            .finally(IO.pipeWith(rl, resumeReadline, readlinePrompt)));
 };
 
 /**
@@ -125,7 +130,7 @@ const handleCloseWith = options => rl => rl.on('close', pipe(bootstrap.getUserNa
  */
 export const initializeCmdShellWith = options => pipe(
     tap(pipe(getHomeDir, changeDir)), // go to user home directory
-    tap(pipe(bootstrap.getUserName, options.onStart ?? identity, logCurrentWorkingDir)), // process bootstrap phase
+    tap(pipe(bootstrap.getUserName, options.onStart ?? identity)), // process bootstrap phase
     handleInputLineWith(options), handleCloseIntent, handleCloseWith(options), // subscribe readline events
     readlinePrompt // shell start
 );
