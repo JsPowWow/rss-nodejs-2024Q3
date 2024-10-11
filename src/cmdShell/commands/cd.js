@@ -1,7 +1,7 @@
 import {chdir} from 'node:process'
 import {getCurrentWorkingDir, parseCmdLine, withCmdArgsValues} from '#shell-utils';
 import {Nothing, pipeAsync, pipeAsyncWith} from '#fp-utils';
-import {assertHasExpectedPositionalsNum, InvalidInputError, OperationFailedError} from '#shell-errors';
+import {InvalidInputError, OperationFailedError} from '#shell-errors';
 import {outputMsg} from '#shell-messages';
 import path from 'node:path';
 
@@ -35,13 +35,11 @@ export default class CDCommand {
         const {values, positionals} = await parseInput(ctx);
         ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: {values, positionals}} : Nothing;
 
-        assertHasExpectedPositionalsNum(CDCommand.command, 1, {values, positionals});
-
         if (values['help']) {
             return yield {type: 'success', message: ctx.input, data: outputMsg`${CDCommand.description}`};
         }
 
-        await pipeAsync(chdir)(positionals[0].trim()).catch(OperationFailedError.reThrowWith);
+        await pipeAsync(chdir)(ctx.input.trimStart().slice(3)).catch(OperationFailedError.reThrowWith);
 
         const currentDir = path.resolve(getCurrentWorkingDir());
         ctx.debug ? yield {type: 'debug', message: 'currentDir', data: currentDir} : Nothing;

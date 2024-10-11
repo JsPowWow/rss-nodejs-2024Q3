@@ -73,6 +73,23 @@ export function assertHasExpectedPositionalsNum(command, expectedNum, args) {
 
 /**
  * @param {string} command
+ * @param {number} minExpectedNum
+ * @param {ParsedArgs} args
+ */
+export function assertHasMinExpectedPositionalsNum(command, minExpectedNum, args) {
+    const {positionals, values} = args;
+    const extraPositionals = positionals?.filter((p) => p !== command) ?? [];
+    if (extraPositionals.length < minExpectedNum && !values['help']) {
+        InvalidInputError.throw(`Expect to have: ${minExpectedNum} param(s) provided.`);
+    }
+    if (values['help'] && extraPositionals.length > 0) {
+        InvalidInputError.throw(`Expect to have either --help or param(s) provided.`);
+    }
+}
+
+
+/**
+ * @param {string} command
  * @param {ParsedArgs} args
  */
 export function assertHasOptions(command, args) {
