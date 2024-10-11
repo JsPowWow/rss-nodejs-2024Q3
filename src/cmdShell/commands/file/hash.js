@@ -11,13 +11,13 @@ const COMMAND_DESCRIPTION = outputMsg`Calculate hash for file and print it into 
 const parseInput = parseInputForHelpOption;
 
 /** @implements {Command} */
-export default class HashCommand {
+export default class FileHashCommand {
     static command = 'hash';
 
     static description = COMMAND_DESCRIPTION;
 
     get [Symbol.toStringTag]() {
-        return `HashCommand::(${HashCommand.command})`;
+        return `HashCommand::(${FileHashCommand.command})`;
     }
 
     /**
@@ -29,10 +29,10 @@ export default class HashCommand {
         ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: {values, positionals}} : Nothing;
 
         if (values['help']) {
-            return yield {type: 'success', message: ctx.input, data: outputMsg`${HashCommand.description}`};
+            return yield {type: 'success', message: ctx.input, data: outputMsg`${FileHashCommand.description}`};
         }
         const hash = crypto.createHash("sha256");
-        const filePath = path.resolve(ctx.input.trimStart().slice(HashCommand.command.length + 1));
+        const filePath = path.resolve(ctx.input.trimStart().slice(FileHashCommand.command.length + 1));
 
         try {
             for await (const chunk of createReadStream(filePath, {encoding: 'utf8'})) {

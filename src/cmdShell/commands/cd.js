@@ -10,13 +10,13 @@ const COMMAND_DESCRIPTION = outputMsg`Go to dedicated folder from current direct
 const parseInput = parseInputForHelpOption;
 
 /** @implements {Command} */
-export default class CDCommand {
+export default class GoToDirectoryCommand {
     static command = 'cd';
 
     static description = COMMAND_DESCRIPTION;
 
     get [Symbol.toStringTag]() {
-        return `CDCommand::(${CDCommand.command})`;
+        return `CDCommand::(${GoToDirectoryCommand.command})`;
     }
 
     /**
@@ -28,10 +28,10 @@ export default class CDCommand {
         ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: {values, positionals}} : Nothing;
 
         if (values['help']) {
-            return yield {type: 'success', message: ctx.input, data: outputMsg`${CDCommand.description}`};
+            return yield {type: 'success', message: ctx.input, data: outputMsg`${GoToDirectoryCommand.description}`};
         }
 
-        const newDirPath = ctx.input.trimStart().slice(CDCommand.command.length + 1);
+        const newDirPath = ctx.input.trimStart().slice(GoToDirectoryCommand.command.length + 1);
 
         await pipeAsync(chdir)(newDirPath).catch(OperationFailedError.reThrowWith);
 

@@ -10,13 +10,13 @@ const COMMAND_DESCRIPTION = outputMsg`Create empty file in current working direc
 const parseInput = parseInputForHelpOption;
 
 /** @implements {Command} */
-export default class AddCommand {
+export default class CreateFileCommand {
     static command = 'add';
 
     static description = COMMAND_DESCRIPTION;
 
     get [Symbol.toStringTag]() {
-        return `AddCommand::(${AddCommand.command})`;
+        return `AddCommand::(${CreateFileCommand.command})`;
     }
 
     /**
@@ -28,10 +28,10 @@ export default class AddCommand {
         ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: {values, positionals}} : Nothing;
 
         if (values['help']) {
-            return yield {type: 'success', message: ctx.input, data: outputMsg`${AddCommand.description}`};
+            return yield {type: 'success', message: ctx.input, data: outputMsg`${CreateFileCommand.description}`};
         }
 
-        const filePath = path.resolve(ctx.input.trimStart().slice(AddCommand.command.length + 1));
+        const filePath = path.resolve(ctx.input.trimStart().slice(CreateFileCommand.command.length + 1));
 
         await fs.promises.writeFile(filePath, "", {flag: 'wx'}).catch(OperationFailedError.reThrowWith);
 

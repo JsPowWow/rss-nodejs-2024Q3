@@ -10,13 +10,13 @@ const COMMAND_DESCRIPTION = outputMsg`Go upper from current directory`;
 const parseInput = parseInputForHelpOption;
 
 /** @implements {Command} */
-export default class UPCommand {
+export default class DirectoryUpCommand {
     static command = 'up';
 
     static description = COMMAND_DESCRIPTION;
 
     get [Symbol.toStringTag]() {
-        return `UPCommand::(${UPCommand.command})`;
+        return `UPCommand::(${DirectoryUpCommand.command})`;
     }
 
     /**
@@ -27,10 +27,10 @@ export default class UPCommand {
         const {values, positionals} = await parseInput(ctx);
         ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: {values, positionals}} : Nothing;
 
-        assertNoExtraPositionals(UPCommand.command, {values, positionals});
+        assertNoExtraPositionals(DirectoryUpCommand.command, {values, positionals});
 
         if (values['help']) {
-            return yield {type: 'success', message: ctx.input, data: outputMsg`${UPCommand.description}`};
+            return yield {type: 'success', message: ctx.input, data: outputMsg`${DirectoryUpCommand.description}`};
         }
 
         await pipeAsync(chdir)("..").catch(OperationFailedError.reThrowWith);

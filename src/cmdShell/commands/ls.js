@@ -43,13 +43,13 @@ const toOutputString = (file) => output2Msg`${file.type === 'D' ? 'DIR'.padEnd(8
 
 
 /** @implements {Command} */
-export default class LSCommand {
+export default class ListDirectoryCommand {
     static command = 'ls';
 
     static description = COMMAND_DESCRIPTION;
 
     get [Symbol.toStringTag]() {
-        return `LSCommand::(${LSCommand.command})`;
+        return `LSCommand::(${ListDirectoryCommand.command})`;
     }
 
     /**
@@ -60,10 +60,10 @@ export default class LSCommand {
         const {values, positionals} = await parseInput(ctx);
         ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: values} : Nothing;
 
-        assertNoExtraPositionals(LSCommand.command, {values, positionals});
+        assertNoExtraPositionals(ListDirectoryCommand.command, {values, positionals});
 
         if (values['help']) {
-            return yield {type: 'success', message: ctx.input, data: outputMsg`${LSCommand.description}`};
+            return yield {type: 'success', message: ctx.input, data: outputMsg`${ListDirectoryCommand.description}`};
         }
 
         const currentDir = path.resolve(getCurrentWorkingDir());

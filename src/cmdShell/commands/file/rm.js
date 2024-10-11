@@ -10,13 +10,13 @@ const COMMAND_DESCRIPTION = outputMsg`Delete file`;
 const parseInput = parseInputForHelpOption;
 
 /** @implements {Command} */
-export default class RmCommand {
+export default class RemoveFileCommand {
     static command = 'rm';
 
     static description = COMMAND_DESCRIPTION;
 
     get [Symbol.toStringTag]() {
-        return `RmCommand::(${RmCommand.command})`;
+        return `RmCommand::(${RemoveFileCommand.command})`;
     }
 
     /**
@@ -28,10 +28,10 @@ export default class RmCommand {
         ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: {values, positionals}} : Nothing;
 
         if (values['help']) {
-            return yield {type: 'success', message: ctx.input, data: outputMsg`${RmCommand.description}`};
+            return yield {type: 'success', message: ctx.input, data: outputMsg`${RemoveFileCommand.description}`};
         }
 
-        const filePath = path.resolve(ctx.input.trimStart().slice(RmCommand.command.length + 1));
+        const filePath = path.resolve(ctx.input.trimStart().slice(RemoveFileCommand.command.length + 1));
 
         await fs.promises.unlink(filePath).catch(OperationFailedError.reThrowWith);
 
