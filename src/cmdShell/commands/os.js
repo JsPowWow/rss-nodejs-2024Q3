@@ -55,7 +55,7 @@ export default class OSCommand {
 
     /**
      * @param {CmdExecContext} ctx
-     * @returns {AsyncGenerator<CmdResult, void, *>}
+     * @returns {AsyncGenerator<CmdOperation, void, *>}
      */
     async* execute(ctx) {
         const {values: args, positionals} = await parseInput(ctx);
@@ -65,9 +65,11 @@ export default class OSCommand {
 
         const requestedOutput = getOutputInfoByArgs(args);
         ctx.debug ? yield {type: 'debug', message: 'requested OS Infos', data: requestedOutput} : Nothing;
-        ctx.output(requestedOutput.length
-            ? requestedOutput.join('\n')
-            : missingInputOperandsMsg(OSCommand.command));
-        yield {type: 'debug', message: 'finished', data: this};
+
+        return yield {
+            type: 'success', message: ctx.input, data: requestedOutput.length
+                ? requestedOutput.join('\n')
+                : missingInputOperandsMsg(OSCommand.command)
+        };
     }
 }

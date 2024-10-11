@@ -2,7 +2,7 @@ import {createReadline} from '#readline-utils';
 import {log} from '#console-utils';
 import {IO} from '#fp-utils';
 import {initializeCmdShellWith} from '#shell-commander';
-import {errorMsg, outputMsg} from "#shell-messages";
+import {errorMsg, logDebug, outputMsg} from "#shell-messages";
 import ExitCommand from "#shell-commands/exit.js";
 import OsCommand from "#shell-commands/os.js";
 import {isInstanceOf} from '#common-utils';
@@ -48,6 +48,22 @@ const printError = (err) => {
     return log(errorMsg`Error: ${err.message}`)
 }
 
+/**
+ * @param {CmdOperation} result
+ */
+const printResult = (result) => {
+    log(result.data)
+}
+
+/**
+ * @param {CmdOperation} result
+ */
+const printDebug = (result) => {
+    if (result.data) {
+        return logDebug(result.message, result.data)
+    }
+    return logDebug(result.message);
+}
 
 export const createShell = IO.pipeWith(
     createReadline(),
@@ -55,7 +71,9 @@ export const createShell = IO.pipeWith(
         commandsConfig: cmdConfig,
         onStart: sayGreetings,
         onClose: sayGoodByeAndThankYou,
+        onResult: printResult,
         onError: printError,
-        debug: DEBUG
+        debug: DEBUG,
+        onDebug: printDebug
     })
 );

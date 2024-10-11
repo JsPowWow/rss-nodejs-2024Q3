@@ -36,7 +36,7 @@ export const withCmdArgsValues = (...argsOptions) => (args) => {
 export function assertNoExtraPositionals(arg, positionals) {
     const extraPositionals = positionals?.filter((p) => p !== arg) ?? [];
     if (extraPositionals.length > 0) {
-        InvalidInputError.throw(positionals?.join(" "));
+        InvalidInputError.throw(`Unknown param(s): ${positionals?.join(" ")}`);
     }
 }
 

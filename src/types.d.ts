@@ -7,7 +7,7 @@ export type ParsedArgs = {
 };
 
 export interface Command {
-    execute(ctx: CmdExecContext): AsyncGenerator<CmdResult>;
+    execute(ctx: CmdExecContext): AsyncGenerator<CmdOperation>;
 }
 
 export type CommandsConfig = Record<string, {
@@ -18,19 +18,19 @@ export type CommandsConfig = Record<string, {
 export type CmdExecContext = {
     rl: Interface;
     input: string;
-    output: (...args: unknown[]) => void;
-    command: Command,
     debug?: boolean;
 }
 
-export type CmdResultType = 'info' | 'debug' | 'warning';
-export type CmdResult = { type: CmdResultType, message: string, data?: unknown };
+export type CmdOperationType = 'success' | 'debug';
+export type CmdOperation = { type: CmdOperationType, message: string, data?: unknown };
 
 export interface CommanderOptions {
     commandsConfig: CommandsConfig;
     onStart?: (username: string) => void;
     onClose?: (username: string) => void;
     onError: (error: Error) => void;
+    onResult: (result: CmdOperation) => void;
+    onDebug?: (result: CmdOperation) => void;
     debug?: boolean;
 }
 

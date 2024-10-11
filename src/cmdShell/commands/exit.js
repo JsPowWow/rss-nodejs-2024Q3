@@ -16,7 +16,7 @@ export default class ExitCommand {
 
     /**
      * @param {CmdExecContext} ctx
-     * @returns {AsyncGenerator<CmdResult, void, *>}
+     * @returns {AsyncGenerator<CmdOperation, void, *>}
      */
     async* execute(ctx) {
         ctx.rl.close();

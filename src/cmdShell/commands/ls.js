@@ -62,7 +62,7 @@ export default class LSCommand {
 
     /**
      * @param {CmdExecContext} ctx
-     * @returns {AsyncGenerator<CmdResult, void, *>}
+     * @returns {AsyncGenerator<CmdOperation, void, *>}
      */
     async* execute(ctx) {
         const {values: args, positionals} = await parseInput(ctx);
@@ -71,8 +71,7 @@ export default class LSCommand {
         assertNoExtraPositionals(LSCommand.command, positionals);
 
         if (args['help']) {
-            ctx.output(outputMsg`${LSCommand.description}`)
-            return;
+            return yield {type: 'success', message: ctx.input, data: outputMsg`${LSCommand.description}`};
         }
 
         const currentDir = path.resolve(getCurrentWorkingDir());
@@ -82,12 +81,11 @@ export default class LSCommand {
             .catch(OperationFailedError.reThrowWith);
         ctx.debug ? yield {type: 'debug', message: 'files', data: filesInDir} : Nothing;
 
-        ctx.output(
-            filesInDir
+        return yield {
+            type: 'success', message: ctx.input, data: filesInDir
                 .map(toNameAndType)
                 .sort(sortByTypeAndName)
-                .map(toOutputString).join('\n'));
-
-        yield {type: 'debug', message: 'finished', data: this};
+                .map(toOutputString).join('\n')
+        };
     }
 }

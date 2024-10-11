@@ -1,9 +1,8 @@
 import {closeReadline, pauseReadline, resumeReadline, setReadlinePrompt} from '#readline-utils';
-import {IO, Maybe, pipe, pipeAsyncWith, tap} from '#fp-utils';
+import {IO, isFn, Maybe, pipe, pipeAsyncWith, tap} from '#fp-utils';
 import {InvalidInputError} from '#shell-errors';
 import {noopCommand} from '#shell-commands/noop.js';
-import {logCurrentWorkingDir, logDebug, shellPromptMsg} from '#shell-messages';
-import {log} from '#console-utils';
+import {logCurrentWorkingDir, shellPromptMsg} from '#shell-messages';
 import {identity} from '#common-utils';
 import {changeDir, getCurrentWorkingDir, getHomeDir, parseCmdLine, processExit} from '#shell-utils';
 import Bootstrap from './bootstrap.js';
@@ -24,8 +23,6 @@ const handleCloseIntent = rl => rl.on('SIGINT', IO.pipeWith(rl, closeReadline));
  * @param {object} options
  * @param {module:readline/promises.Interface} options.readline
  * @param {string} options.inputString
- * @param {CmdExecContext['output']} options.output
- * @param {Command} [options.command]
  * @param {boolean} [options.debug]
  * @returns {CmdExecContext}
  */
@@ -33,44 +30,42 @@ const createCommandContext = options => {
     return {
         rl: options.readline,
         input: options.inputString,
-        output: options.output,
-        command: options.command ?? noopCommand,
-        debug: options.debug ?? false
+        debug: Boolean(options.debug)
     };
 };
 
 /**
  * @param {CommandsConfig} config
- * @returns {function(CmdExecContext): CmdExecContext}
+ * @returns {function(CmdExecContext): [Command, CmdExecContext]}
  */
-const getCommand = config => ctx =>
-    Object.assign(ctx, {
-        command: Maybe.of(Object
-            .entries(config)
-            .find(([key, cmd]) => cmd && parseCmdLine(ctx.input.trim()).filter(Boolean)[0] === key)?.[1]?.factory).matchWith({
-            some: factory => factory(),
-            nothing: () => ctx.input.trim()
-                ? InvalidInputError.throw(ctx.input)
-                : noopCommand
-        })
-    });
+const findConfigurableCommand = config => ctx =>
+    [Maybe.of(Object
+        .entries(config)
+        .find(([key, cmd]) => cmd && parseCmdLine(ctx.input.trim()).filter(Boolean)[0] === key)?.[1]?.factory).matchWith({
+        some: factory => factory(),
+        nothing: () => ctx.input.trim()
+            ? InvalidInputError.throw(ctx.input)
+            : noopCommand
+    }), ctx];
 
 /**
- * @param {CmdExecContext} ctx
- * @returns {Promise<void>}
+ * @param {CommanderOptions} options
+ * @returns {function([Command,CmdExecContext]):Promise<void>}
  */
-const executeCommand = async ctx => {
-    const {command, debug = false} = ctx;
+const executeCommand = (options) => async ([command, ctx]) => {
+    const {debug = false} = ctx;
     if (!command) {
         InvalidInputError.throw(ctx.input);
     }
     for await (const cmdOutput of command.execute(ctx)) {
-        const {type, message, data} = cmdOutput;
+        const {type} = cmdOutput;
 
-        if (debug && type === 'debug') {
-            data
-                ? logDebug(message, data)
-                : logDebug(message);
+        if (debug && type === 'debug' && isFn(options.onDebug)) {
+            options.onDebug(cmdOutput);
+        }
+
+        if (type === 'success') {
+            options.onResult(cmdOutput);
         }
     }
 };
@@ -84,12 +79,11 @@ const handleInputLineWith = options => rl => {
         pipeAsyncWith(createCommandContext({
                 readline: rl,
                 inputString: input,
-                output: log,
                 debug: Boolean(options.debug)
             }),
             // TODO AR - add command execTimeTracking
             tap(() => pauseReadline(rl)),
-            getCommand(options.commandsConfig), executeCommand)
+            findConfigurableCommand(options.commandsConfig), executeCommand(options))
             .catch(options.onError)
             .finally(IO.pipeWith(rl, resumeReadline, tap(logCurrentWorkingDir), readlinePrompt)));
 };

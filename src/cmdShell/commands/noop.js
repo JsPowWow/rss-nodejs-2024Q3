@@ -16,7 +16,7 @@ class NoopCommand {
 
     /**
      * @param {CmdExecContext} _ctx
-     * @returns {AsyncGenerator<CmdResult, void, *>}
+     * @returns {AsyncGenerator<CmdOperation, void, *>}
      */
     async* execute(_ctx) {
         yield {type: 'debug', message: 'noop command in action'};
