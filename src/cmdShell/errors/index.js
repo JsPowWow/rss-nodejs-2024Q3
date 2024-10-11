@@ -48,7 +48,7 @@ export function assertNoExtraPositionals(command, args) {
     const {positionals} = args;
     const extraPositionals = positionals?.filter((p) => p !== command) ?? [];
     if (extraPositionals.length > 0) {
-        InvalidInputError.throw(`Unknown param(s): ${positionals?.join(" ")}`);
+        InvalidInputError.throw(`Unknown param(s): ${extraPositionals?.join(" ")}`);
     }
 }
 
