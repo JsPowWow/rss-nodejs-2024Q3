@@ -20,7 +20,7 @@ export type CmdExecContext = {
 }
 
 export type CmdOperationType = 'noop' | 'chunk' | 'success' | 'systemAction' | 'debug';
-export type CmdOperation = { type: CmdOperationType, message: string, data?: unknown };
+export type CmdOperation = { type: CmdOperationType, message?: string, data?: unknown };
 
 export interface CommanderOptions {
     commandsConfig: CommandsConfig;

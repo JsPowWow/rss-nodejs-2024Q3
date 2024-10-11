@@ -2,7 +2,7 @@ import {createReadStream} from 'node:fs'
 import path from 'node:path'
 import {parseInputForHelpOption} from '#shell-utils';
 import {Nothing} from '#fp-utils';
-import {output2Msg, outputMsg} from '#shell-messages';
+import {output2Msg, output3Msg, outputMsg} from '#shell-messages';
 import {OperationFailedError} from '#shell-errors';
 
 const COMMAND_DESCRIPTION = outputMsg`Read file and print it's content in console (it's done using Readable stream)`;
@@ -40,7 +40,6 @@ export default class CatCommand {
         } catch (e) {
             OperationFailedError.reThrowWith(e);
         }
-
-        yield {type: 'success', message: ctx.input, data: filePath}
+        yield {type: 'success', message: ctx.input, data: output3Msg`${filePath}  - contend successfully displayed`};
     }
 }

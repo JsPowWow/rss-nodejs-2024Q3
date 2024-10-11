@@ -1,22 +1,22 @@
+import fs from 'node:fs'
 import path from 'node:path'
 import {parseInputForHelpOption} from '#shell-utils';
 import {Nothing} from '#fp-utils';
-import {outputMsg} from '#shell-messages';
-import * as fs from 'node:fs';
+import {output2Msg, outputMsg} from '#shell-messages';
 import {OperationFailedError} from '#shell-errors';
 
-const COMMAND_DESCRIPTION = outputMsg`Create empty file in current working directory`;
+const COMMAND_DESCRIPTION = outputMsg`Delete file`;
 
 const parseInput = parseInputForHelpOption;
 
 /** @implements {Command} */
-export default class AddCommand {
-    static command = 'add';
+export default class RmCommand {
+    static command = 'rm';
 
     static description = COMMAND_DESCRIPTION;
 
     get [Symbol.toStringTag]() {
-        return `AddCommand::(${AddCommand.command})`;
+        return `RmCommand::(${RmCommand.command})`;
     }
 
     /**
@@ -28,13 +28,13 @@ export default class AddCommand {
         ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: {values, positionals}} : Nothing;
 
         if (values['help']) {
-            return yield {type: 'success', message: ctx.input, data: outputMsg`${AddCommand.description}`};
+            return yield {type: 'success', message: ctx.input, data: outputMsg`${RmCommand.description}`};
         }
 
-        const filePath = path.resolve(ctx.input.trimStart().slice(AddCommand.command.length + 1));
+        const filePath = path.resolve(ctx.input.trimStart().slice(RmCommand.command.length + 1));
 
-        await fs.promises.writeFile(filePath, "", {flag: 'wx'}).catch(OperationFailedError.reThrowWith);
+        await fs.promises.unlink(filePath).catch(OperationFailedError.reThrowWith);
 
-        yield {type: 'success', message: ctx.input, data: filePath}
+        yield {type: 'success', message: ctx.input, data: output2Msg`${filePath}  -  successfully deleted`};
     }
 }

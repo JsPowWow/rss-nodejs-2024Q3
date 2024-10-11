@@ -38,6 +38,6 @@ export default class CDCommand {
         const currentDir = path.resolve(getCurrentWorkingDir());
         ctx.debug ? yield {type: 'debug', message: 'currentDir', data: currentDir} : Nothing;
 
-        return yield {type: 'success', message: ctx.input, data: currentDir};
+        return yield {type: 'success'};
     }
 }

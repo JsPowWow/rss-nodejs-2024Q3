@@ -10,8 +10,9 @@ import {InvalidInputError, OperationFailedError} from '#shell-errors';
 import LSCommand from '#shell-commands/ls.js';
 import CDCommand from '#shell-commands/cd.js';
 import UPCommand from '#shell-commands/up.js';
-import CatCommand from '#shell-commands/cat.js';
-import AddCommand from '#shell-commands/add.js';
+import CatCommand from '#shell-commands/file/cat.js';
+import AddCommand from '#shell-commands/file/add.js';
+import RmCommand from '#shell-commands/file/rm.js';
 
 const DEBUG = false;
 
@@ -24,6 +25,7 @@ const cmdConfig = Object.freeze({
     [UPCommand.command]: {factory: () => new UPCommand(), description: UPCommand.description, debug: false},
     [CatCommand.command]: {factory: () => new CatCommand(), description: CatCommand.description, debug: false},
     [AddCommand.command]: {factory: () => new AddCommand(), description: AddCommand.description, debug: false},
+    [RmCommand.command]: {factory: () => new RmCommand(), description: RmCommand.description, debug: false},
 });
 
 /**
@@ -60,7 +62,11 @@ const printError = (err) => {
  * @param {CmdOperation} result
  */
 const printResult = (result) => {
-    log(result.data ? result.data : result.message);
+    if (result.data) {
+        log(result.data)
+    } else if (result.message) {
+        log(result.message)
+    }
 }
 
 /**
