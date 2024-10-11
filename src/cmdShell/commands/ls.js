@@ -1,9 +1,9 @@
 import {readdir} from 'node:fs/promises'
 import path from 'node:path'
 
-import {getCurrentWorkingDir, parseCmdLine, withCmdArgsValues} from '#shell-utils';
-import {Nothing, pipeAsyncWith} from '#fp-utils';
-import {assertNoExtraPositionals, InvalidInputError, OperationFailedError} from '#shell-errors';
+import {getCurrentWorkingDir, parseInputForHelpOption} from '#shell-utils';
+import {Nothing} from '#fp-utils';
+import {assertNoExtraPositionals, OperationFailedError} from '#shell-errors';
 import {output2Msg, outputMsg} from '#shell-messages';
 
 const COMMAND_DESCRIPTION = outputMsg`Print in console list of all files and folders (${'ls'}) in current directory.
@@ -11,15 +11,7 @@ const COMMAND_DESCRIPTION = outputMsg`Print in console list of all files and fol
     * folders and files are sorted in alphabetical order ascending, list of folders goes first;
     * type of directory content marked explicitly (e.g. as a corresponding column value);`;
 
-/**
- * @param {CmdExecContext} ctx
- * @returns {Promise<ParsedArgs>}
- */
-const parseInput = ctx =>
-    pipeAsyncWith(parseCmdLine(ctx.input).slice(1),
-        withCmdArgsValues(
-            {name: 'help', type: 'boolean', default: false}
-        )).catch(InvalidInputError.reThrowWith(ctx.input));
+const parseInput = parseInputForHelpOption;
 
 /**
  * @param {Dirent} file

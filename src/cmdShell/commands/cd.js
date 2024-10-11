@@ -1,21 +1,13 @@
 import {chdir} from 'node:process'
-import {getCurrentWorkingDir, parseCmdLine, withCmdArgsValues} from '#shell-utils';
-import {Nothing, pipeAsync, pipeAsyncWith} from '#fp-utils';
-import {InvalidInputError, OperationFailedError} from '#shell-errors';
+import {getCurrentWorkingDir, parseInputForHelpOption} from '#shell-utils';
+import {Nothing, pipeAsync} from '#fp-utils';
+import {OperationFailedError} from '#shell-errors';
 import {outputMsg} from '#shell-messages';
 import path from 'node:path';
 
 const COMMAND_DESCRIPTION = outputMsg`Go to dedicated folder from current directory (${'path_to_directory'} can be relative or absolute)`;
 
-/**
- * @param {CmdExecContext} ctx
- * @returns {Promise<ParsedArgs>}
- */
-const parseInput = ctx =>
-    pipeAsyncWith(parseCmdLine(ctx.input).slice(1),
-        withCmdArgsValues(
-            {name: 'help', type: 'boolean', default: false}
-        )).catch(InvalidInputError.reThrowWith(ctx.input));
+const parseInput = parseInputForHelpOption;
 
 /** @implements {Command} */
 export default class CDCommand {

@@ -1,6 +1,8 @@
 import process from 'node:process';
 import os from 'node:os';
 import {parseArgs} from 'node:util';
+import {pipeAsyncWith} from '#fp-utils';
+import {InvalidInputError} from '#shell-errors';
 
 /**
  * @param {number} code
@@ -27,6 +29,16 @@ export const withCmdArgsValues = (...argsOptions) => (args) => {
         tokens
     }
 };
+
+/**
+ * @param {CmdExecContext} ctx
+ * @returns {Promise<ParsedArgs>}
+ */
+export const parseInputForHelpOption = ctx =>
+    pipeAsyncWith(parseCmdLine(ctx.input).slice(1),
+        withCmdArgsValues(
+            {name: 'help', type: 'boolean', default: false}
+        )).catch(InvalidInputError.reThrowWith(ctx.input));
 
 /**
  * @param {string} input
