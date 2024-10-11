@@ -10,6 +10,7 @@ import {InvalidInputError, OperationFailedError} from '#shell-errors';
 import LSCommand from '#shell-commands/ls.js';
 import CDCommand from '#shell-commands/cd.js';
 import UPCommand from '#shell-commands/up.js';
+import CatCommand from '#shell-commands/cat.js';
 
 const DEBUG = false;
 
@@ -20,6 +21,7 @@ const cmdConfig = Object.freeze({
     [LSCommand.command]: {factory: () => new LSCommand(), description: LSCommand.description, debug: false},
     [CDCommand.command]: {factory: () => new CDCommand(), description: CDCommand.description, debug: false},
     [UPCommand.command]: {factory: () => new UPCommand(), description: UPCommand.description, debug: false},
+    [CatCommand.command]: {factory: () => new CatCommand(), description: CatCommand.description, debug: false},
 });
 
 /**

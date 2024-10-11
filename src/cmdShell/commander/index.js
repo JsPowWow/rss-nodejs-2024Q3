@@ -97,6 +97,7 @@ const executeCommand = (options) => async ([command, ctx]) => {
                 await iterator.next(processCommandActionsRequest({...options, cmdOutput, debug}));
                 break;
             }
+            case 'chunk':
             case 'success': {
                 options.onResult(cmdOutput);
                 break;

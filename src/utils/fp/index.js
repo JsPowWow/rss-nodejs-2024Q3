@@ -109,6 +109,20 @@ export function tap(tapFn) {
 }
 
 /**
+ * @function tapSafe
+ * @param {Function} [tapFn]
+ * @return {function(...[*]): *}
+ */
+export function tapSafe(tapFn) {
+    return function passThrough(...args) {
+        tapFn?.(...args);
+        return args.length === 1
+            ? args.shift()
+            : [...args];
+    }
+}
+
+/**
  * @function tapAsync
  * @param {Function} tapFn
  * @return {function(...[*]): Promise<*>}

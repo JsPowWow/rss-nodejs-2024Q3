@@ -39,7 +39,9 @@ export default class CDCommand {
             return yield {type: 'success', message: ctx.input, data: outputMsg`${CDCommand.description}`};
         }
 
-        await pipeAsync(chdir)(ctx.input.trimStart().slice(3)).catch(OperationFailedError.reThrowWith);
+        const newDirPath = ctx.input.trimStart().slice(CDCommand.command.length + 1);
+
+        await pipeAsync(chdir)(newDirPath).catch(OperationFailedError.reThrowWith);
 
         const currentDir = path.resolve(getCurrentWorkingDir());
         ctx.debug ? yield {type: 'debug', message: 'currentDir', data: currentDir} : Nothing;

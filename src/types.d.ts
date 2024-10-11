@@ -19,7 +19,7 @@ export type CmdExecContext = {
     debug?: boolean;
 }
 
-export type CmdOperationType = 'noop' | 'success' | 'systemAction' | 'debug';
+export type CmdOperationType = 'noop' | 'chunk' | 'success' | 'systemAction' | 'debug';
 export type CmdOperation = { type: CmdOperationType, message: string, data?: unknown };
 
 export interface CommanderOptions {
