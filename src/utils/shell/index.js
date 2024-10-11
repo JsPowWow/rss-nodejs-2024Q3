@@ -1,8 +1,11 @@
+import {stat} from 'node:fs/promises'
+import {resolve} from 'node:path'
 import process from 'node:process';
 import os from 'node:os';
 import {parseArgs} from 'node:util';
 import {pipeAsyncWith} from '#fp-utils';
 import {InvalidInputError} from '#shell-errors';
+import {stubFalse} from '#common-utils';
 
 /**
  * @param {number} code
@@ -84,3 +87,29 @@ export const getHomeDir = () => os.userInfo().homedir;
  * @return {void}
  */
 export const changeDir = (dir) => process.chdir(dir);
+
+/**
+ * @param {string} path
+ * @return {Promise<boolean>}
+ */
+export const isFileAsync = async (path) => {
+    try {
+        const stats = await stat(resolve(path)).catch(stubFalse)
+        return stats.isFile();
+    } catch (error) {
+        return false
+    }
+}
+
+/**
+ * @param {string} path
+ * @return {Promise<boolean>}
+ */
+export const isDirectoryAsync = async (path) => {
+    try {
+        const stats = await stat(resolve(path))
+        return stats.isDirectory();
+    } catch (error) {
+        return false
+    }
+}

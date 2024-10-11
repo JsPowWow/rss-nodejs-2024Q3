@@ -1,4 +1,7 @@
 import {missingInputOperandsMsg} from '#shell-messages';
+import {stubFalse, stubTrue} from '#common-utils';
+import fs from 'node:fs';
+import {isFileAsync} from '#shell-utils';
 
 export class InvalidInputError extends Error {
     static MESSAGE = 'Invalid input';
@@ -26,7 +29,9 @@ export class OperationFailedError extends Error {
     static MESSAGE = 'Operation failed';
 
     constructor(message = '') {
-        super(`${OperationFailedError.MESSAGE}: ${message}`);
+        super(message
+            ? `${message}`
+            : `${OperationFailedError.MESSAGE}`);
     }
 
     static throw(message = '') {
@@ -98,3 +103,43 @@ export function assertHasOptions(command, args) {
         InvalidInputError.throw(missingInputOperandsMsg(command));
     }
 }
+
+
+/**
+ * @description Check file existence using provided {@link path}
+ * @param {string} path
+ * @param {number=} mode
+ * @returns {Promise<boolean>}
+ */
+export const isFileExistsAsync = (path, mode) =>
+    fs.promises.access(path, mode ? mode : fs.constants.F_OK).then(stubTrue, stubFalse)
+
+/**
+ * @param {string} filePath
+ * @returns {Promise<void>}
+ */
+export const assertFileExistsAsync = async (filePath) => isFileExistsAsync(filePath).then((exists) => {
+    if (!exists) {
+        throw OperationFailedError.throw(`The ${filePath} does not exist`);
+    }
+})
+
+/**
+ * @param {string} filePath
+ * @returns {Promise<void>}
+ */
+export const assertFileNotExistsAsync = async (filePath) => isFileExistsAsync(filePath).then((exists) => {
+    if (exists) {
+        throw OperationFailedError.throw(`The ${filePath} already exist`)
+    }
+})
+
+/**
+ * @param {string} filePath
+ * @returns {Promise<void>}
+ */
+export const assertIsFile  = async (filePath) => isFileAsync(filePath).then((isFile) => {
+    if (!isFile) {
+        throw OperationFailedError.throw(`The ${filePath} is not a file`);
+    }
+})

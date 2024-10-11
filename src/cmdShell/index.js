@@ -14,20 +14,27 @@ import CatCommand from '#shell-commands/file/cat.js';
 import AddCommand from '#shell-commands/file/add.js';
 import RmCommand from '#shell-commands/file/rm.js';
 import HashCommand from '#shell-commands/file/hash.js';
+import RenameCommand from '#shell-commands/file/rn.js';
 
 const DEBUG = false;
 
 /** @type {CommandsConfig} */
 const cmdConfig = Object.freeze({
+    // TODO AR rename commands to more meaningful
+    // no arguments commands
     [ExitCommand.command]: {factory: () => new ExitCommand(), description: ExitCommand.description, debug: false},
-    [OsCommand.command]: {factory: () => new OsCommand(), description: OsCommand.description, debug: false},
+    [OsCommand.command]: {factory: () => new OsCommand(), description: OsCommand.description, debug: false}, // many options command
     [LSCommand.command]: {factory: () => new LSCommand(), description: LSCommand.description, debug: false},
-    [CDCommand.command]: {factory: () => new CDCommand(), description: CDCommand.description, debug: false},
     [UPCommand.command]: {factory: () => new UPCommand(), description: UPCommand.description, debug: false},
+    // one argument commands
+    [CDCommand.command]: {factory: () => new CDCommand(), description: CDCommand.description, debug: false},
     [CatCommand.command]: {factory: () => new CatCommand(), description: CatCommand.description, debug: false},
     [AddCommand.command]: {factory: () => new AddCommand(), description: AddCommand.description, debug: false},
     [RmCommand.command]: {factory: () => new RmCommand(), description: RmCommand.description, debug: false},
     [HashCommand.command]: {factory: () => new HashCommand(), description: HashCommand.description, debug: false},
+    // two arguments commands
+    [RenameCommand.command]: {factory: () => new RenameCommand(), description: HashCommand.description, debug: false},
+    // TODO AR two operands (cp|mv|compress|decompress) && args.length === 2
 });
 
 /**
@@ -54,7 +61,10 @@ const printError = (err) => {
         return log(errorMsg`Invalid input: ${err.input} ${err.cause?.message}`)
     }
     if (isInstanceOf(OperationFailedError, err)) {
-        return log(errorMsg`Operation failed: ${err.cause?.message}`)
+        if (err.cause) {
+            return log(errorMsg`Operation failed: ${err.cause?.message}`)
+        }
+        return log(errorMsg`Operation failed: ${err.message}`);
     }
 
     return log(errorMsg`Error: ${err.message}`)
