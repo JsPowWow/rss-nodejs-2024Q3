@@ -19,7 +19,11 @@ export default class ExitCommand {
      * @returns {AsyncGenerator<CmdOperation, void, *>}
      */
     async* execute(ctx) {
-        ctx.rl.close();
-        yield {type: 'debug', message: 'finished'};
+        yield {type: 'debug', message: 'request close'};
+
+        const answer = yield {type: 'systemAction', message: 'request close', data: 'terminate'};
+        yield {type: 'noop', message: 'noop'};
+
+        yield {type: 'success', message: 'done', data: outputMsg`${answer}`};
     }
 }

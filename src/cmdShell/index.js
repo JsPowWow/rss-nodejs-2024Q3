@@ -13,9 +13,9 @@ const DEBUG = false;
 
 /** @type {CommandsConfig} */
 const cmdConfig = Object.freeze({
-    [ExitCommand.command]: {factory: () => new ExitCommand(), description: ExitCommand.description},
-    [OsCommand.command]: {factory: () => new OsCommand(), description: OsCommand.description},
-    [LSCommand.command]: {factory: () => new LSCommand(), description: LSCommand.description},
+    [ExitCommand.command]: {factory: () => new ExitCommand(), description: ExitCommand.description, debug: false},
+    [OsCommand.command]: {factory: () => new OsCommand(), description: OsCommand.description, debug: false},
+    [LSCommand.command]: {factory: () => new LSCommand(), description: LSCommand.description, debug: false},
 });
 
 /**
@@ -52,7 +52,7 @@ const printError = (err) => {
  * @param {CmdOperation} result
  */
 const printResult = (result) => {
-    log(result.data)
+    log(result.data ? result.data : result.message);
 }
 
 /**

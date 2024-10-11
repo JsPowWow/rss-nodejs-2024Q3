@@ -21,14 +21,12 @@ const handleCloseIntent = rl => rl.on('SIGINT', IO.pipeWith(rl, closeReadline));
 
 /**
  * @param {object} options
- * @param {module:readline/promises.Interface} options.readline
  * @param {string} options.inputString
  * @param {boolean} [options.debug]
  * @returns {CmdExecContext}
  */
 const createCommandContext = options => {
     return {
-        rl: options.readline,
         input: options.inputString,
         debug: Boolean(options.debug)
     };
@@ -41,15 +39,37 @@ const createCommandContext = options => {
 const findConfigurableCommand = config => ctx =>
     [Maybe.of(Object
         .entries(config)
-        .find(([key, cmd]) => cmd && parseCmdLine(ctx.input.trim()).filter(Boolean)[0] === key)?.[1]?.factory).matchWith({
-        some: factory => factory(),
+        .find(([key, cmd]) => cmd && parseCmdLine(ctx.input.trim()).filter(Boolean)[0] === key)?.[1]).matchWith({
+        some: ({factory, debug = false}) => {
+            Object.assign(ctx, {debug: ctx.debug || Boolean(debug)})
+            return factory();
+        },
         nothing: () => ctx.input.trim()
             ? InvalidInputError.throw(ctx.input)
             : noopCommand
     }), ctx];
 
 /**
- * @param {CommanderOptions} options
+ * @param {CommanderOptions & {
+ *      rl: module:readline/promises.Interface;
+ *      cmdOutput: CmdOperation;
+ *  }} options
+ * @returns {*}
+ */
+const processCommandActionsRequest = (options) => {
+    const {type, data} = options.cmdOutput;
+    if (type === 'systemAction' && data === 'terminate') {
+        if (options.debug) {
+            setTimeout(() => options.rl.close());
+            return 'Will Close'
+        }
+        options.rl.close();
+        return 'Close';
+    }
+};
+
+/**
+ * @param {CommanderOptions & {rl: module:readline/promises.Interface}} options
  * @returns {function([Command,CmdExecContext]):Promise<void>}
  */
 const executeCommand = (options) => async ([command, ctx]) => {
@@ -57,15 +77,25 @@ const executeCommand = (options) => async ([command, ctx]) => {
     if (!command) {
         InvalidInputError.throw(ctx.input);
     }
-    for await (const cmdOutput of command.execute(ctx)) {
+
+    const iterator = command.execute(ctx);
+
+    for await (const cmdOutput of iterator) {
         const {type} = cmdOutput;
 
-        if (debug && type === 'debug' && isFn(options.onDebug)) {
-            options.onDebug(cmdOutput);
-        }
-
-        if (type === 'success') {
-            options.onResult(cmdOutput);
+        switch (type) {
+            case 'debug': {
+                debug && isFn(options.onDebug) && options.onDebug(cmdOutput);
+                break;
+            }
+            case 'systemAction': {
+                await iterator.next(processCommandActionsRequest({...options, cmdOutput, debug}));
+                break;
+            }
+            case 'success': {
+                options.onResult(cmdOutput);
+                break;
+            }
         }
     }
 };
@@ -75,15 +105,10 @@ const executeCommand = (options) => async ([command, ctx]) => {
  * @returns {function(module:readline/promises.Interface): module:readline/promises.Interface}
  */
 const handleInputLineWith = options => rl => {
-    return rl.on('line', input =>
-        pipeAsyncWith(createCommandContext({
-                readline: rl,
-                inputString: input,
-                debug: Boolean(options.debug)
-            }),
-            // TODO AR - add command execTimeTracking
+    return rl.on('line', inputString =>
+        pipeAsyncWith(createCommandContext({inputString, debug: Boolean(options.debug)}),
             tap(() => pauseReadline(rl)),
-            findConfigurableCommand(options.commandsConfig), executeCommand(options))
+            findConfigurableCommand(options.commandsConfig), executeCommand({...options, rl}))
             .catch(options.onError)
             .finally(IO.pipeWith(rl, resumeReadline, tap(logCurrentWorkingDir), readlinePrompt)));
 };
