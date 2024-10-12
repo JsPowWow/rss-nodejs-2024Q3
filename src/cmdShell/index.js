@@ -15,6 +15,7 @@ import CreateFileCommand from '#shell-commands/file/add.js';
 import RemoveFileCommand from '#shell-commands/file/rm.js';
 import FileHashCommand from '#shell-commands/file/hash.js';
 import RenameCommand from '#shell-commands/file/rn.js';
+import CopyFileCommand from '#shell-commands/file/cp.js';
 
 const DEBUG = false;
 
@@ -62,10 +63,15 @@ const cmdConfig = Object.freeze({
     // two arguments commands
     [RenameCommand.command]: {
         factory: () => new RenameCommand(),
-        description: FileHashCommand.description,
+        description: RenameCommand.description,
         debug: false
     },
-    // TODO AR two operands (cp|mv|compress|decompress) && args.length === 2
+    [CopyFileCommand.command]: {
+        factory: () => new CopyFileCommand(),
+        description: CopyFileCommand.description,
+        debug: false
+    },
+    // TODO AR two operands (mv|compress|decompress) && args.length === 2
 });
 
 /**
