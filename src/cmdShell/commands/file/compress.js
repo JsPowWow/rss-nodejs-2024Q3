@@ -1,6 +1,7 @@
 import {parseInputForHelpOption} from '#shell-utils';
 import {pipeline} from 'node:stream/promises'
 import fs from 'node:fs';
+import zlib from 'node:zlib'
 import {Nothing} from '#fp-utils';
 import {output2Msg, outputMsg} from '#shell-messages';
 
@@ -8,23 +9,24 @@ import {
     assertFileExistsAsync,
     assertFileNotExistsAsync,
     assertHasExpectedPositionalsNum,
-    assertIsFile, OperationFailedError
+    assertIsFile,
+    OperationFailedError
 } from '#shell-errors';
 import path from 'node:path';
 
 
-const COMMAND_DESCRIPTION = outputMsg`Move file (same as copy, but initial file is deleted, copying part is done using Readable and Writable streams)`;
+const COMMAND_DESCRIPTION = outputMsg`Compress file (using Brotli algorithm, done using Streams API)`;
 
 const parseInput = parseInputForHelpOption;
 
 /** @implements {Command} */
-export default class MoveFileCommand {
-    static command = 'mv';
+export default class CompressFileCommand {
+    static command = 'compress';
 
     static description = COMMAND_DESCRIPTION;
 
     get [Symbol.toStringTag]() {
-        return `MoveFileCommand::(${MoveFileCommand.command})`;
+        return `CompressFileCommand::(${CompressFileCommand.command})`;
     }
 
     /**
@@ -39,39 +41,37 @@ export default class MoveFileCommand {
         ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: {values, positionals}} : Nothing;
 
         if (values['help']) {
-            return yield {type: 'success', message: ctx.input, data: outputMsg`${MoveFileCommand.description}`};
+            return yield {type: 'success', message: ctx.input, data: outputMsg`${CompressFileCommand.description}`};
         }
 
-        assertHasExpectedPositionalsNum(MoveFileCommand.command, 2, parsedArgs);
+        assertHasExpectedPositionalsNum(CompressFileCommand.command, 2, parsedArgs);
 
         const sourceFile = path.resolve(positionals[0]);
 
         await assertFileExistsAsync(sourceFile);
         await assertIsFile(sourceFile);
 
-        const targetFile = path.resolve(positionals[1], path.parse(sourceFile).base)
+        const targetFile = path.resolve(positionals[1], `${path.parse(sourceFile).base}.compressed`);
 
         await assertFileNotExistsAsync(targetFile);
 
         const readableStream = fs.createReadStream(sourceFile)
         const writableStream = fs.createWriteStream(targetFile)
-
-        await pipeline(readableStream, writableStream).catch(OperationFailedError.reThrowWith)
+        const compress = zlib.createBrotliCompress()
+        await pipeline(readableStream, compress, writableStream).catch(OperationFailedError.reThrowWith)
 
         ctx.debug ? yield {
             type: 'debug',
-            message: 'file transferred',
+            message: 'file compressed',
             data: `${sourceFile} -> ${targetFile}`
         } : Nothing;
 
-        await fs.promises.unlink(sourceFile);
-        ctx.debug ? yield {type: 'debug', message: 'origin file deleted', data: `${sourceFile}`} : Nothing;
 
         yield {
             type: 'success',
             message: ctx.input,
-            data: output2Msg`${sourceFile}  successfully moved to ${targetFile}`
-        };
-    }
+            data: output2Msg`${sourceFile}  successfully compressed to ${targetFile}`
+    };
+}
 }
 

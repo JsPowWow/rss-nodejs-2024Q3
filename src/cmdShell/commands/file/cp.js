@@ -4,7 +4,12 @@ import fs from 'node:fs';
 import {Nothing} from '#fp-utils';
 import {output2Msg, outputMsg} from '#shell-messages';
 
-import {assertFileExistsAsync, assertHasExpectedPositionalsNum, assertIsFile} from '#shell-errors';
+import {
+    assertFileExistsAsync,
+    assertFileNotExistsAsync,
+    assertHasExpectedPositionalsNum,
+    assertIsFile, OperationFailedError
+} from '#shell-errors';
 import path from 'node:path';
 
 
@@ -45,9 +50,12 @@ export default class CopyFileCommand {
         await assertIsFile(srcFilePath); // TODO AR do we really need for file only per task ?
 
         const targetFilePath = path.resolve(positionals[1], path.parse(srcFilePath).base)
+
+        await assertFileNotExistsAsync(targetFilePath);
+
         const readableStream = fs.createReadStream(srcFilePath)
         const writableStream = fs.createWriteStream(targetFilePath)
-        await pipeline(readableStream, writableStream)
+        await pipeline(readableStream, writableStream).catch(OperationFailedError.reThrowWith)
 
         yield {
             type: 'success',
