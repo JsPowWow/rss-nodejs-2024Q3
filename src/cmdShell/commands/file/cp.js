@@ -8,7 +8,8 @@ import {
     assertFileExistsAsync,
     assertFileNotExistsAsync,
     assertHasExpectedPositionalsNum,
-    assertIsFile, OperationFailedError
+    assertIsFile,
+    OperationFailedError
 } from '#shell-errors';
 import path from 'node:path';
 
@@ -47,7 +48,7 @@ export default class CopyFileCommand {
         const srcFilePath = path.resolve(positionals[0]);
 
         await assertFileExistsAsync(srcFilePath);
-        await assertIsFile(srcFilePath); // TODO AR do we really need for file only per task ?
+        await assertIsFile(srcFilePath);
 
         const targetFilePath = path.resolve(positionals[1], path.parse(srcFilePath).base)
 

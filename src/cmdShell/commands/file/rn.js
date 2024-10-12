@@ -46,7 +46,7 @@ export default class RenameCommand {
 
         await assertFileExistsAsync(srcFilePath);
 
-        await assertIsFile(srcFilePath); // TODO AR do we really need for file only per task ?
+        await assertIsFile(srcFilePath);
 
         const targetFilePath = path.resolve(path.parse(srcFilePath).dir, positionals[1]);
 

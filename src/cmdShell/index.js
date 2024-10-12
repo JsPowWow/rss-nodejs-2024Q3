@@ -18,6 +18,7 @@ import RenameCommand from '#shell-commands/file/rn.js';
 import CopyFileCommand from '#shell-commands/file/cp.js';
 import MoveFileCommand from '#shell-commands/file/mv.js';
 import CompressFileCommand from '#shell-commands/file/compress.js';
+import DeCompressFileCommand from '#shell-commands/file/decompress.js';
 
 const DEBUG = false;
 
@@ -83,7 +84,11 @@ const cmdConfig = Object.freeze({
         description: CompressFileCommand.description,
         debug: false
     },
-    // TODO AR two operands (decompress)
+    [DeCompressFileCommand.command]: {
+        factory: () => new DeCompressFileCommand(),
+        description: DeCompressFileCommand.description,
+        debug: false
+    },
 });
 
 /**

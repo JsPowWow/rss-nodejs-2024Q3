@@ -138,7 +138,7 @@ export const assertFileNotExistsAsync = async (filePath) => isFileExistsAsync(fi
  * @param {string} filePath
  * @returns {Promise<void>}
  */
-export const assertIsFile  = async (filePath) => isFileAsync(filePath).then((isFile) => {
+export const assertIsFile = async (filePath) => isFileAsync(filePath).then((isFile) => {
     if (!isFile) {
         throw OperationFailedError.throw(`The ${filePath} is not a file`);
     }

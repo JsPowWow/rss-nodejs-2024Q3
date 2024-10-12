@@ -28,7 +28,11 @@ export default class StreamFileContentCommand {
         ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: {values, positionals}} : Nothing;
 
         if (values['help']) {
-            return yield {type: 'success', message: ctx.input, data: outputMsg`${StreamFileContentCommand.description}`};
+            return yield {
+                type: 'success',
+                message: ctx.input,
+                data: outputMsg`${StreamFileContentCommand.description}`
+            };
         }
 
         const filePath = path.resolve(ctx.input.trimStart().slice(StreamFileContentCommand.command.length + 1));

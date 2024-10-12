@@ -71,7 +71,7 @@ export default class CompressFileCommand {
             type: 'success',
             message: ctx.input,
             data: output2Msg`${sourceFile}  successfully compressed to ${targetFile}`
-    };
-}
+        };
+    }
 }
 
