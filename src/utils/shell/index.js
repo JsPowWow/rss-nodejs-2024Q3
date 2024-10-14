@@ -92,24 +92,15 @@ export const changeDir = (dir) => process.chdir(dir);
  * @param {string} path
  * @return {Promise<boolean>}
  */
-export const isFileAsync = async (path) => {
-    try {
-        const stats = await stat(resolve(path)).catch(stubFalse)
-        return stats.isFile();
-    } catch (error) {
-        return false
-    }
-}
+export const isFileAsync = async (path) =>
+    stat(resolve(path))
+        .then((stats) => stats.isFile())
+        .catch(stubFalse)
 
 /**
  * @param {string} path
  * @return {Promise<boolean>}
  */
-export const isDirectoryAsync = async (path) => {
-    try {
-        const stats = await stat(resolve(path))
-        return stats.isDirectory();
-    } catch (error) {
-        return false
-    }
-}
+export const isDirectoryAsync = async (path) => stat(resolve(path))
+    .then((stats) => stats.isDirectory())
+    .catch(stubFalse)

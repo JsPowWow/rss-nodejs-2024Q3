@@ -1,7 +1,7 @@
 import {missingInputOperandsMsg} from '#shell-messages';
 import {stubFalse, stubTrue} from '#common-utils';
 import fs from 'node:fs';
-import {getCurrentWorkingDir, isFileAsync} from '#shell-utils';
+import {getCurrentWorkingDir, isDirectoryAsync, isFileAsync} from '#shell-utils';
 import path from 'node:path';
 
 export class InvalidInputError extends Error {
@@ -142,6 +142,16 @@ export const assertFileNotExistsAsync = async (filePath) => isFileExistsAsync(fi
 export const assertIsFile = async (filePath) => isFileAsync(filePath).then((isFile) => {
     if (!isFile) {
         throw OperationFailedError.throw(`The ${filePath} is not a file`);
+    }
+})
+
+/**
+ * @param {string} dirPath
+ * @returns {Promise<void>}
+ */
+export const assertIsDirectory = async (dirPath) => isDirectoryAsync(dirPath).then((isDir) => {
+    if (!isDir) {
+        throw OperationFailedError.throw(`The ${dirPath} is not a directory`);
     }
 })
 

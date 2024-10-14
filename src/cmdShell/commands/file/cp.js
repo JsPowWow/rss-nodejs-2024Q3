@@ -7,7 +7,7 @@ import {output2Msg, outputMsg} from '#shell-messages';
 import {
     assertFileExistsAsync,
     assertFileNotExistsAsync,
-    assertHasExpectedPositionalsNum,
+    assertHasExpectedPositionalsNum, assertIsDirectory,
     assertIsFile,
     OperationFailedError
 } from '#shell-errors';
@@ -52,6 +52,7 @@ export default class CopyFileCommand {
 
         const targetFilePath = path.resolve(positionals[1], path.parse(srcFilePath).base)
 
+        await assertIsDirectory(positionals[1]);
         await assertFileNotExistsAsync(targetFilePath);
 
         const readableStream = fs.createReadStream(srcFilePath)

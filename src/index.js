@@ -25,11 +25,11 @@ const sayGoodByeAndThankYou = userName => {
 }
 
 /**
- * @param {Error | InvalidInputError} err
+ * @param {Error} err
  */
 const printError = (err) => {
     if (isInstanceOf(InvalidInputError, err)) {
-        return log(errorMsg`Invalid input: ${err.input} ${err.cause?.message}`)
+        return log(errorMsg`Invalid input: ${err['input']} ${err.cause?.message}`)
     }
     if (isInstanceOf(OperationFailedError, err)) {
         if (err.cause) {
