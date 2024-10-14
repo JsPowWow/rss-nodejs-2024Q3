@@ -1,7 +1,8 @@
 import {missingInputOperandsMsg} from '#shell-messages';
 import {stubFalse, stubTrue} from '#common-utils';
 import fs from 'node:fs';
-import {isFileAsync} from '#shell-utils';
+import {getCurrentWorkingDir, isFileAsync} from '#shell-utils';
+import path from 'node:path';
 
 export class InvalidInputError extends Error {
     static MESSAGE = 'Invalid input';
@@ -143,3 +144,14 @@ export const assertIsFile = async (filePath) => isFileAsync(filePath).then((isFi
         throw OperationFailedError.throw(`The ${filePath} is not a file`);
     }
 })
+
+/**
+ * @param {string} filePath
+ * @returns {void}
+ */
+export const assertIsFileSomewhereInCurrentWorkDirectory = (filePath) => {
+    const absoluteFilePath = path.resolve(filePath);
+    if (!absoluteFilePath.startsWith(getCurrentWorkingDir())) {
+        OperationFailedError.throw(`Expect to have the "${filePath}" file path to be provided somewhere in current work directory.`);
+    }
+}

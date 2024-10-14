@@ -1,9 +1,14 @@
 import path from 'node:path'
+import fs from 'node:fs/promises';
 import {parseInputForHelpOption} from '#shell-utils';
 import {Nothing} from '#fp-utils';
 import {output2Msg, outputMsg} from '#shell-messages';
-import * as fs from 'node:fs';
-import {OperationFailedError} from '#shell-errors';
+import {
+    assertHasExpectedPositionalsNum,
+    assertIsFileSomewhereInCurrentWorkDirectory,
+    OperationFailedError
+} from '#shell-errors';
+
 
 const COMMAND_DESCRIPTION = outputMsg`Create empty file in current working directory`;
 
@@ -24,16 +29,22 @@ export default class CreateFileCommand {
      * @returns {AsyncGenerator<CmdOperation, void, *>}
      */
     async* execute(ctx) {
-        const {values, positionals} = await parseInput(ctx);
-        ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: {values, positionals}} : Nothing;
+        const parsedArgs = await parseInput(ctx);
+        ctx.debug ? yield {type: 'debug', message: 'parsed arguments', data: parsedArgs} : Nothing;
 
-        if (values['help']) {
+        if (parsedArgs.values['help']) {
             return yield {type: 'success', message: ctx.input, data: outputMsg`${CreateFileCommand.description}`};
         }
 
-        const filePath = path.resolve(ctx.input.trimStart().slice(CreateFileCommand.command.length + 1));
+        assertHasExpectedPositionalsNum(CreateFileCommand.command, 1, parsedArgs);
 
-        await fs.promises.writeFile(filePath, "", {flag: 'wx'}).catch(OperationFailedError.reThrowWith);
+        const filePath = path.resolve(parsedArgs.positionals[0]);
+
+        ctx.debug ? yield {type: 'debug', message: 'filepath', data: `${filePath}`} : Nothing;
+
+        assertIsFileSomewhereInCurrentWorkDirectory(filePath);
+
+        await fs.writeFile(filePath, "", {flag: 'wx'}).catch(OperationFailedError.reThrowWith);
 
         yield {type: 'success', message: ctx.input, data: output2Msg`${filePath}  -  successfully created`};
     }
