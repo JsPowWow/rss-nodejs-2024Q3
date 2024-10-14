@@ -51,11 +51,7 @@ export default class DeCompressFileCommand {
         await assertFileExistsAsync(sourceFile);
         await assertIsFile(sourceFile);
 
-        if (!path.parse(sourceFile).ext.includes('.compressed')) {
-            OperationFailedError.throw(`Expect to have with .compressed extension file provided, but got "${sourceFile}"`)
-        }
-
-        const targetFile = path.resolve(positionals[1], path.parse(sourceFile).name);
+        const targetFile = path.resolve(positionals[1]);
 
         await assertFileNotExistsAsync(targetFile);
 

@@ -51,7 +51,7 @@ export default class CompressFileCommand {
         await assertFileExistsAsync(sourceFile);
         await assertIsFile(sourceFile);
 
-        const targetFile = path.resolve(positionals[1], `${path.parse(sourceFile).base}.compressed`);
+        const targetFile = path.resolve(positionals[1]);
 
         await assertFileNotExistsAsync(targetFile);
 
