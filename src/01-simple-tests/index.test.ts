@@ -1,6 +1,3 @@
-// Uncomment the code below and write your tests
-// import { simpleCalculator, Action } from './index';
-
 import { Action, simpleCalculator } from './index';
 
 describe('simpleCalculator tests', () => {
@@ -42,7 +39,14 @@ describe('simpleCalculator tests', () => {
   });
 
   test('should divide two numbers', () => {
-    expect(simpleCalculator({ a: 7, b: 2, action: Action.Multiply })).toBe(14);
+    expect(simpleCalculator({ a: 7, b: 2, action: Action.Divide })).toBe(3.5);
+    expect(simpleCalculator({ a: 4, b: -10, action: Action.Divide })).toBe(
+      -0.4,
+    );
+    expect(simpleCalculator({ a: -30, b: 15, action: Action.Divide })).toBe(-2);
+    expect(simpleCalculator({ a: -5, b: -0.5, action: Action.Divide })).toBe(
+      10,
+    );
   });
 
   test('should exponentiate two numbers', () => {
