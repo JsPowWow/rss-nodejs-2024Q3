@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "This repository is the implementation part of nodejs-assignments https://github.com/AlreadyBored/nodejs-assignments",
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=22.0.0"
   },
   "type": "module",
   "scripts": {
@@ -39,7 +39,7 @@
     "url": "https://github.com/JsPowWow/rss-nodejs-2024Q3/issues"
   },
   "homepage": "https://github.com/JsPowWow/rss-nodejs-2024Q3",
-  "devDependencies": {
-    "@types/node": "^22.7.4"
+  "imports": {
+    "#utils": "./src/utils/index.js"
   }
 }
