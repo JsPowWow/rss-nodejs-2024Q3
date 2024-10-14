@@ -36,6 +36,6 @@
     "#shell-errors": "./src/cmdShell/errors/index.js",
     "#shell-commander": "./src/cmdShell/commander/index.js",
     "#shell-commands/*": "./src/cmdShell/commands/*",
-    "#shell": "./src/cmdShell/index.js"
+    "#shell-config": "./src/cmdShell/config.js"
   }
 }
