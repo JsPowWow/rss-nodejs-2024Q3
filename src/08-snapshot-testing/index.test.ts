@@ -1,14 +1,30 @@
-// Uncomment the code below and write your tests
-// import { generateLinkedList } from './index';
+import { generateLinkedList } from './index';
 
 describe('generateLinkedList', () => {
-  // Check match by expect(...).toStrictEqual(...)
   test('should generate linked list from values 1', () => {
-    // Write your test here
+    const trip = ['Kiev', 'Krakow', 'Gdansk'];
+    const tripLinkedList = Object.freeze({
+      value: 'Kiev',
+      next: {
+        value: 'Krakow',
+        next: {
+          value: 'Gdansk',
+          next: {
+            next: null,
+            value: null,
+          },
+        },
+      },
+    });
+    expect(generateLinkedList(trip)).toStrictEqual(tripLinkedList);
   });
 
-  // Check match by comparison with snapshot
   test('should generate linked list from values 2', () => {
-    // Write your test here
+    const courses = Object.freeze([
+      Object.freeze({ name: 'Node Basic' }),
+      Object.freeze({ name: 'Node Tests' }),
+      Object.freeze({ name: 'Node Crud' }),
+    ]);
+    expect(generateLinkedList(courses as { name: string }[])).toMatchSnapshot();
   });
 });
