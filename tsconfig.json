@@ -1,11 +1,14 @@
 {
   "compilerOptions": {
-    "baseUrl": "src",
     "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
     "lib": ["ESNext"],
-    "module": "CommonJS",
+    "module": "ESNext",
+    "esModuleInterop": true,
+    "allowImportingTsExtensions": true,
+    "allowSyntheticDefaultImports": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
     "moduleResolution": "Node",
     "noUncheckedIndexedAccess": true,
     "strictNullChecks": true,
@@ -18,6 +21,12 @@
     "sourceMap": true,
     "strict": true,
     "strictPropertyInitialization": false,
-    "target": "ES2020"
+    "target": "ES2020",
+    "baseUrl": "./",
+    "paths": {
+      "@/models": [
+        "./src/models/index.ts"
+      ]
+    }
   },
 }
