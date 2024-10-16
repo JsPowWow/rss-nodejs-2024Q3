@@ -1,10 +1,49 @@
+import { Server } from 'http';
+
 import request from 'supertest';
 
-import { USER_DATA, server, stopServer } from '../index.ts';
+import { Routes, startServer } from '../index.ts';
+
+const USER_DATA = Object.freeze({
+  id: '68412a87-1843-4d92-b506-009e8fbcfb11',
+  name: 'Test User',
+  age: 27,
+  hobbies: ['fishing', 'sport'],
+  isActive: true,
+});
+
+const testRoutes: Routes = {
+  '/': `Welcome to "users" in-memory database server`,
+  '/user-example/ageNum': USER_DATA.age,
+  '/user-example/active': USER_DATA.isActive,
+  '/user-example': USER_DATA,
+  '/user-example/name': () => USER_DATA.name.toUpperCase(),
+  '/user-example/age': () => USER_DATA.age,
+  '/user-example/method/full': (req, res, resolve) => {
+    resolve({ status: res.statusCode, data: USER_DATA, url: req.url });
+  },
+  '/user-example/method/short': (req) => ({
+    user: USER_DATA,
+    url: req.url,
+    cookie: req.headers.cookie,
+  }),
+};
 
 describe('Server basics tests', () => {
+  let server: Server;
+  let stopServer: () => Promise<void>;
+
+  beforeAll(async () => {
+    const { server: testServer, stopServer: stopTestServer } = startServer({
+      port: 12345,
+      routes: testRoutes,
+    });
+    server = testServer;
+    stopServer = stopTestServer;
+  });
+
   afterAll(async () => {
-    await stopServer(server);
+    await stopServer();
   });
 
   it('Get welcome greetings (string)', async () => {
@@ -13,10 +52,24 @@ describe('Server basics tests', () => {
     expect(res.text).toEqual('Welcome to "users" in-memory database server');
   });
 
+  it('Get user age (number)', async () => {
+    const res = await request(server).get('/user-example/ageNum');
+    expect(res.statusCode).toBe(200);
+    expect(res.text).toEqual('27');
+  });
+
+  it('Get user isActive (boolean)', async () => {
+    const res = await request(server).get('/user-example/active');
+    expect(res.statusCode).toBe(200);
+    expect(res.text).toEqual('true');
+  });
+
   it('Get some from non-existed route (undefined)', async () => {
     const res = await request(server).get('/no-route');
-    expect(res.statusCode).toBe(200);
-    expect(res.text).toEqual('not found');
+    expect(res.statusCode).toBe(404);
+    expect(res.text).toEqual(
+      'The server has not found anything matching the Request /no-route',
+    );
   });
 
   it('Get example user (object)', async () => {
@@ -57,7 +110,7 @@ describe('Server basics tests', () => {
     expect(res.statusCode).toBe(200);
     expect(res.text).toEqual(
       JSON.stringify({
-        user: USER_DATA.user,
+        user: USER_DATA,
         url: '/user-example/method/short',
         cookie: 'aaa; bbb',
       }),

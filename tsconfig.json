@@ -2,7 +2,8 @@
   "compilerOptions": {
     "forceConsistentCasingInFileNames": true,
     "lib": ["ESNext"],
-    "module": "ESNext",
+    "target": "ESNext",
+    "module": "CommonJS",
     "esModuleInterop": true,
     "allowImportingTsExtensions": true,
     "allowSyntheticDefaultImports": true,
@@ -14,19 +15,16 @@
     "strictNullChecks": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "outDir": "dist",
     "removeComments": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
     "strictPropertyInitialization": false,
-    "target": "ES2020",
     "baseUrl": "./",
-    "paths": {
-      "@/models": [
-        "./src/models/index.ts"
-      ]
-    }
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "paths": {}
   },
+  "include": ["src/**/*"]
 }

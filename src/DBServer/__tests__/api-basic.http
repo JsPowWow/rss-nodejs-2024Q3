@@ -1,5 +1,5 @@
 ### Get welcome
-GET http://localhost:1337/ HTTP/1.1
+POST http://localhost:1337/api/create HTTP/1.1
 Accept: application/json
 
 ### Get hello

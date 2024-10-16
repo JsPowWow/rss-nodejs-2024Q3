@@ -4,20 +4,19 @@
   "description": "Task to implement simple CRUD API using in-memory database underneath",
   "author": "JsPowWow",
   "license": "MIT",
-  "type": "module",
   "engines": {
     "node": ">=22.0.0"
   },
   "scripts": {
-    "start:dev": "nodemon src/DBServer/index.ts",
-    "start:prod": "npm run build && node dist/index.js",
-    "start:multi": "nodemon -w src src/multi.ts",
-    "start:db": "nodemon src/DBServer/index.ts",
-    "format": "prettier --write \"src/**/*.ts\"",
-    "lint": "eslint \"src/**/*.ts\" --fix",
-    "test": "jest --silent",
-    "test:verbose": "jest",
-    "build": "tsc"
+    "start:dev": "nodemon --exec ts-node src/DBServer/server.ts",
+    "start:prod": "npm run build && node dist/server.js",
+    "start:multi": "npm run build && node dist/cluster.js",
+    "build": "tsc",
+    "test": "jest"
+  },
+  "keywords": [],
+  "dependencies": {
+    "dotenv": "^16.4.5"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.25.8",
@@ -42,11 +41,6 @@
     "ts-jest": "^29.2.5",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
-    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.6.3"
-  },
-  "dependencies": {
-    "dotenv": "^16.4.5",
-    "uuid": "^10.0.0"
   }
 }
