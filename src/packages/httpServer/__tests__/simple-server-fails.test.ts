@@ -120,7 +120,7 @@ describe('Server basics failure tests', () => {
     const res = await request(server)
       .get('/unsafe/throw')
       .expect(500)
-      .expect('Internal Server Error')
+      .expect('Internal Server Error, cause by:\n"Test Error1"')
       .expect('Content-Type', 'text/plain');
     expect(res.body).toEqual({});
   });
@@ -128,7 +128,7 @@ describe('Server basics failure tests', () => {
     const res = await request(server)
       .get('/unsafe/throwAsync')
       .expect(500)
-      .expect('Internal Server Error')
+      .expect('Internal Server Error, cause by:\n"Test Error1 Async"')
       .expect('Content-Type', 'text/plain');
     expect(res.body).toEqual({});
   });
@@ -136,7 +136,7 @@ describe('Server basics failure tests', () => {
     const res = await request(server)
       .get('/unsafe/throw2')
       .expect(500)
-      .expect('Internal Server Error')
+      .expect('Internal Server Error, cause by:\n"Test Error2"')
       .expect('Content-Type', 'text/plain');
     expect(res.body).toEqual({});
   });
@@ -144,7 +144,7 @@ describe('Server basics failure tests', () => {
     const res = await request(server)
       .get('/unsafe/throw2Async')
       .expect(500)
-      .expect('Internal Server Error')
+      .expect('Internal Server Error, cause by:\n"Test Error2 Async"')
       .expect('Content-Type', 'text/plain');
     expect(res.body).toEqual({});
   });
@@ -160,7 +160,7 @@ describe('Server basics failure tests', () => {
     const res = await request(server)
       .get('/unsafe/throw3Async')
       .expect(500)
-      .expect('Internal Server Error')
+      .expect('Internal Server Error, cause by:\n"Test Error3 Async"')
       .expect('Content-Type', 'text/plain');
     expect(res.body).toEqual({});
   });

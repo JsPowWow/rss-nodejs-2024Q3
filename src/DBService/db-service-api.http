@@ -1,5 +1,5 @@
-### api/create
-POST http://localhost:1337/api/create HTTP/1.1
+### /api/records CREATE
+POST http://localhost:5000//api/records HTTP/1.1
 Accept: application/json
 
 {
@@ -7,18 +7,10 @@ Accept: application/json
   "someData": "content"
 }
 
-### Get hello
-GET http://localhost:1337/hello HTTP/1.1
-Accept: application/json
-
-### Get hello
-GET http://localhost:1337/api/method1 HTTP/1.1
-Accept: application/json
-
-### Get users
-GET http://localhost:1337/api/users HTTP/1.1
+### /api/records POPULATE
+GET http://localhost:5000//api/records HTTP/1.1
 Accept: application/json
 
 ### Get bad route
-GET http://localhost:1337/wrong HTTP/1.1
+GET http://localhost:5000/no-such-route HTTP/1.1
 Accept: application/json

@@ -7,7 +7,7 @@ import * as dotenv from 'dotenv';
 import {
   RouteResolver,
   Routes,
-  assertIsPostRequest,
+  assertIsRequestMethod,
   requestBodyAsync,
   startServer,
 } from '../packages/httpServer';
@@ -21,8 +21,8 @@ type EntityRecord = { id: string; value: unknown };
 
 const DBValues = new Map<string, EntityRecord>();
 
-const createEntity: RouteResolver = async (req, res) => {
-  assertIsPostRequest(req);
+const createRecord: RouteResolver = async (req, res) => {
+  assertIsRequestMethod('POST', req);
   const body = await requestBodyAsync(req);
   const uuid = randomUUID();
   const record = { id: uuid, value: JSON.parse(body) };
@@ -31,8 +31,32 @@ const createEntity: RouteResolver = async (req, res) => {
   res.end(JSON.stringify(record));
 };
 
+const retrieveRecords: RouteResolver = async (req, res) => {
+  assertIsRequestMethod('GET', req);
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify(Array.from(DBValues.values())));
+};
+
+const deleteRecords: RouteResolver = async (req, res) => {
+  assertIsRequestMethod('DELETE', req);
+  const currentSize = DBValues.size;
+  DBValues.clear();
+  res.writeHead(200, { 'Content-Type': 'application/json' });
+  res.end(JSON.stringify({ message: `Deleted ${currentSize} record(s)` }));
+};
+
+const processRecordsApi: RouteResolver = async (req, res, resolver) => {
+  switch (req.method) {
+    case 'GET':
+      return retrieveRecords(req, res, resolver);
+    case 'POST':
+      return createRecord(req, res, resolver);
+  }
+};
+
 const routes: Routes = {
-  '/api/create': createEntity,
+  '/api/records': processRecordsApi,
+  '/api/purge': deleteRecords,
 };
 
 export const DBService = startServer({ routes });

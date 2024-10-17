@@ -1,12 +1,16 @@
 import { IncomingMessage, ServerResponse } from 'http';
 
 import { isNil } from '../../utils/common.ts';
+import { ErrorMessage } from '../../utils/error.ts';
 
-export function assertIsPostRequest(
+export function assertIsRequestMethod(
+  method: string,
   req: IncomingMessage,
-): asserts req is Omit<IncomingMessage, 'method'> & { method: 'POST' } {
-  if (!(req.method === 'POST')) {
-    throw new Error(`Expect ${'POST'} request method, but got ${req.method}"`);
+): asserts req is Omit<IncomingMessage, 'method'> & { method: typeof method } {
+  if (!(req.method === method)) {
+    throw new Error(
+      `Expect the "${method}" request method, but got ${req.method}"`,
+    );
   }
 }
 
@@ -37,8 +41,10 @@ export class InternalServerError extends ServerError {
     );
   }
 
-  static from = (cause: unknown, message: string = '') => {
-    const error = new InternalServerError(message);
+  static from = (cause: unknown) => {
+    const error = new InternalServerError(
+      `${InternalServerError.MESSAGE}, cause by:\n"${ErrorMessage.of(cause)}"`,
+    );
     error.cause = cause;
     return error;
   };
