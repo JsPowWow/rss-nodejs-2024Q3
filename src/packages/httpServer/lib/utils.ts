@@ -1,4 +1,6 @@
-import { IncomingMessage } from 'http';
+import { IncomingMessage, ServerResponse } from 'http';
+
+import { ServerError } from './errors.ts';
 
 export const requestBodyAsync = async (req: IncomingMessage) => {
   let body = '';
@@ -7,4 +9,9 @@ export const requestBodyAsync = async (req: IncomingMessage) => {
     body += chunk.toString();
   }
   return body;
+};
+
+export const endWith = (err: ServerError, res: ServerResponse) => {
+  res.writeHead(err.status, { 'Content-Type': 'text/plain' });
+  res.end(err.message);
 };

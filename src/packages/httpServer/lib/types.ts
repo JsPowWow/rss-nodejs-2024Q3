@@ -3,7 +3,6 @@ import { IncomingMessage, ServerResponse } from 'http';
 export type Routes = Record<string, RouteResolver>;
 
 export type ServerOptions = {
-  port: number;
   routes: Routes;
 };
 

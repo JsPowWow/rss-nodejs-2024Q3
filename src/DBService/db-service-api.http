@@ -1,6 +1,11 @@
-### Get welcome
+### api/create
 POST http://localhost:1337/api/create HTTP/1.1
 Accept: application/json
+
+{
+  "age": 999,
+  "someData": "content"
+}
 
 ### Get hello
 GET http://localhost:1337/hello HTTP/1.1

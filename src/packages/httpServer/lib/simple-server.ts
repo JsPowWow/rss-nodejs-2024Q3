@@ -1,14 +1,75 @@
 import { IncomingMessage, ServerResponse } from 'http';
-import * as console from 'node:console';
 import { Server, createServer } from 'node:http';
 
+import {
+  InternalServerError,
+  NotFoundError,
+  ServerError,
+  withAssertHasDefinedData,
+} from './errors.ts';
 import { getSerializerByValueType } from './serialization.ts';
-import { ServerOptions } from './types.ts';
-import { assertIsNonNullable, isSomeFn } from '../../utils/common.ts';
+import { ServerDataSerializer, ServerOptions } from './types.ts';
+import { endWith } from './utils.ts';
+import {
+  assertIsNonNullable,
+  isInstanceOf,
+  isNil,
+  isSomeFn,
+} from '../../utils/common.ts';
+import { ErrorMessage } from '../../utils/error.ts';
+import { errorMsg, log } from '../../utils/logging.ts';
 
-const DEFAULTS = Object.freeze({
-  port: 5000,
-});
+const ROUTE_HANDLER_PARAMS_LENGTH = 3;
+
+const processErrors = (res: ServerResponse) => (err: unknown) => {
+  const errorMessage = ErrorMessage.from(err);
+  if (isInstanceOf(ServerError, err)) {
+    log(errorMsg`Error occurred: ${err.status} ${errorMessage}`);
+    endWith(err, res);
+  } else {
+    processErrors(res)(InternalServerError.from(err));
+  }
+};
+
+const processRouteRequest: ServerDataSerializer<CallableFunction> = (
+  [fn, req, res],
+  resolve,
+) => {
+  if (fn.length === ROUTE_HANDLER_PARAMS_LENGTH) {
+    Promise.resolve(fn(req, res, resolve))
+      .then(withAssertHasDefinedData(res))
+      .catch((e: Error) => {
+        return processErrors(res)(e);
+      });
+  } else {
+    Promise.resolve(fn(req, res))
+      .then(resolve)
+      .catch((e: Error) => {
+        return processErrors(res)(e);
+      });
+  }
+};
+
+const serve = (data: unknown, req: IncomingMessage, res: ServerResponse) => {
+  const dataType = typeof data;
+
+  if (data === null) {
+    InternalServerError.throw();
+  }
+
+  if (dataType === 'string') {
+    return void res.end(data);
+  }
+  const serialize = isSomeFn(data)
+    ? processRouteRequest
+    : getSerializerByValueType(dataType);
+
+  if (isSomeFn(serialize)) {
+    serialize([data, req, res], (dto: unknown) => serve(dto, req, res));
+  } else {
+    withAssertHasDefinedData(res)(data);
+  }
+};
 
 const stopServer = async (server: Server) => {
   return new Promise<void>((res) => {
@@ -16,34 +77,24 @@ const stopServer = async (server: Server) => {
   });
 };
 
-const serve = (data: unknown, req: IncomingMessage, res: ServerResponse) => {
-  const dataType = typeof data;
-  if (dataType === 'string') {
-    return void res.end(data);
-  }
-  const serialize = getSerializerByValueType(dataType);
-  if (!isSomeFn(serialize)) {
-    //throw new Error('not found'); // TODO AR
-    res.writeHead(404, 'Not Found');
-    return void res.end(
-      `The server has not found anything matching the Request ${req.url}`,
-    );
-  }
-
-  serialize([data, req, res], (dto: unknown) => serve(dto, req, res));
-};
-
 export const startServer = (options: ServerOptions) => {
-  const { port = DEFAULTS.port, routes = {} } = options ?? Object.create(null);
+  const { routes = {} } = options ?? Object.create(null);
   const server = createServer((req: IncomingMessage, res: ServerResponse) => {
-    assertIsNonNullable(req.url);
-    // TODO AR Either + 500 error
-    serve(routes[req.url], req, res);
-    // throw new Error('TTTT');
-  });
-
-  server.listen(port).on('listening', () => {
-    console.log(`Running simpleHttpServer on port ${port}`);
+    try {
+      assertIsNonNullable(req.url);
+      const route = routes[req.url];
+      if (req.url in routes && isNil(route)) {
+        InternalServerError.throw();
+      }
+      if (isNil(route)) {
+        NotFoundError.throw(
+          `The server has not found anything matching the Request ${req.url}`,
+        );
+      }
+      serve(routes[req.url], req, res);
+    } catch (err: unknown) {
+      processErrors(res)(err);
+    }
   });
 
   return { server, stopServer: () => stopServer(server) };

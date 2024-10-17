@@ -1,4 +1,6 @@
-import { IncomingMessage } from 'http';
+import { IncomingMessage, ServerResponse } from 'http';
+
+import { isNil } from '../../utils/common.ts';
 
 export function assertIsPostRequest(
   req: IncomingMessage,
@@ -6,4 +8,70 @@ export function assertIsPostRequest(
   if (!(req.method === 'POST')) {
     throw new Error(`Expect ${'POST'} request method, but got ${req.method}"`);
   }
+}
+
+export const withAssertHasDefinedData =
+  (res: ServerResponse) => (data: unknown) => {
+    if (!res.headersSent && isNil(data)) {
+      InternalServerError.throw();
+    }
+  };
+
+export class ServerError extends Error {
+  status: number;
+
+  constructor(statusCode: number, message = '') {
+    super(message ? `${message}` : `${InternalServerError.MESSAGE}`);
+    this.status = statusCode;
+  }
+}
+
+export class InternalServerError extends ServerError {
+  static MESSAGE = 'Internal Server Error';
+  static CODE = 500;
+
+  constructor(message = '') {
+    super(
+      InternalServerError.CODE,
+      message ? `${message}` : `${InternalServerError.MESSAGE}`,
+    );
+  }
+
+  static from = (cause: unknown, message: string = '') => {
+    const error = new InternalServerError(message);
+    error.cause = cause;
+    return error;
+  };
+
+  static throw(message = '') {
+    throw new InternalServerError(message);
+  }
+
+  static reThrowWith = (cause: unknown) => {
+    const error = new InternalServerError();
+    error.cause = cause;
+    throw error;
+  };
+}
+
+export class NotFoundError extends ServerError {
+  static MESSAGE = 'Not found';
+  static CODE = 404;
+
+  constructor(message = '') {
+    super(
+      NotFoundError.CODE,
+      message ? `${message}` : `${NotFoundError.MESSAGE}`,
+    );
+  }
+
+  static throw(message = '') {
+    throw new NotFoundError(message);
+  }
+
+  static reThrowWith = (cause: unknown) => {
+    const error = new NotFoundError();
+    error.cause = cause;
+    throw error;
+  };
 }

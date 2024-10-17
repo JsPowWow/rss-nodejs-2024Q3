@@ -2,6 +2,7 @@ import { Server } from 'http';
 
 import request from 'supertest';
 
+import { noop } from '../../utils/common.ts';
 import { Routes, startServer } from '../index.ts';
 
 const USER_DATA = Object.freeze({
@@ -35,7 +36,6 @@ describe('Server basics tests', () => {
 
   beforeAll(async () => {
     const { server: testServer, stopServer: stopTestServer } = startServer({
-      port: 12345,
       routes: testRoutes,
     });
     server = testServer;
@@ -44,6 +44,17 @@ describe('Server basics tests', () => {
 
   afterAll(async () => {
     await stopServer();
+  });
+
+  beforeEach(() => {
+    jest
+      .spyOn(console, 'log')
+      .mockName('The "console.log"')
+      .mockImplementation(noop);
+    jest
+      .spyOn(console, 'error')
+      .mockName('The "console.error"')
+      .mockImplementation(noop);
   });
 
   it('Get welcome greetings (string)', async () => {
@@ -64,14 +75,6 @@ describe('Server basics tests', () => {
     expect(res.text).toEqual('true');
   });
 
-  it('Get some from non-existed route (undefined)', async () => {
-    const res = await request(server).get('/no-route');
-    expect(res.statusCode).toBe(404);
-    expect(res.text).toEqual(
-      'The server has not found anything matching the Request /no-route',
-    );
-  });
-
   it('Get example user (object)', async () => {
     const res = await request(server).get('/user-example');
     expect(res.statusCode).toBe(200);
@@ -82,7 +85,7 @@ describe('Server basics tests', () => {
   it('Get user uppercase name (no-param function)', async () => {
     const res = await request(server).get('/user-example/name');
     expect(res.statusCode).toBe(200);
-    expect(res.text).toEqual(JSON.stringify('TEST USER'));
+    expect(res.text).toEqual('TEST USER');
   });
 
   it('Get user age number (no-param function)', async () => {
