@@ -1,3 +1,5 @@
+import { isInstanceOf } from './common.ts';
+
 export type Path = RegExp | string;
 
 export interface Match {
@@ -5,11 +7,7 @@ export interface Match {
   params: Record<string, string> | null;
 }
 
-/**
- * Converts a string path to a Regular Expression.
- * Transforms path parameters into named RegExp groups.
- */
-export const pathToRegExp = (path: string): RegExp => {
+const pathToRegExp = (path: string): RegExp => {
   const pattern = path
     // Escape literal dots
     .replace(/\./g, '\\.')
@@ -22,10 +20,7 @@ export const pathToRegExp = (path: string): RegExp => {
     // Replace wildcard with any zero-to-any character sequence
     .replace(/\*+/g, '.*')
     // Replace parameters with named capturing groups
-    .replace(
-      /:([^\d|^\/][a-zA-Z0-9_]*(?=(?:\/|\\.)|$))/g,
-      (_, paramName) => `(?<${paramName}>[^\/]+?)`,
-    )
+    .replace(/:([^\d|^\/][a-zA-Z0-9_]*(?=(?:\/|\\.)|$))/g, (_, paramName) => `(?<${paramName}>[^\/]+?)`)
     // Allow optional trailing slash
     .concat('(\\/|$)');
 
@@ -33,17 +28,12 @@ export const pathToRegExp = (path: string): RegExp => {
 };
 
 /**
- * Matches a given url against a path.
+ * Matches a given url against a provided path.
  */
-export const match = (path: Path, url: string): Match => {
+export const matchPathUrl = (path: Path, url: string): Match => {
   const expression = path instanceof RegExp ? path : pathToRegExp(path);
   const match = expression.exec(url) || false;
-
-  // Matches in strict mode: match string should equal to input (url)
-  // Otherwise loose matches will be considered truthy:
-  // match('/messages/:id', '/messages/123/users') // true
-  const matches =
-    path instanceof RegExp ? !!match : !!match && match[0] === match.input;
+  const matches = isInstanceOf(RegExp, path) ? !!match : !!match && match[0] === match.input;
 
   return {
     matches,

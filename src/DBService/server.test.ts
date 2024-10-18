@@ -5,16 +5,12 @@ import { noop } from '../packages/utils/common.ts';
 
 describe('DBService tests', () => {
   const server = DBService.server;
-
+  const enableConsole = false; // TODO AR disable enableConsole
   beforeEach(async () => {
-    jest
-      .spyOn(console, 'log')
-      .mockName('The "console.log"')
-      .mockImplementation(noop);
-    jest
-      .spyOn(console, 'error')
-      .mockName('The "console.error"')
-      .mockImplementation(noop);
+    if (!enableConsole) {
+      jest.spyOn(console, 'log').mockName('The "console.log"').mockImplementation(noop);
+    }
+    jest.spyOn(console, 'error').mockName('The "console.error"').mockImplementation(noop);
 
     await request(server).delete('/api/purge');
   });
@@ -30,29 +26,44 @@ describe('DBService tests', () => {
       .expect(201)
       .expect('Content-Type', 'application/json');
 
-    expect(body).toMatchObject({
-      id: expect.any(String),
-      value: { tittle: 'Some data', foo: 'bar' },
-    });
+    expect(body).toMatchObject({ id: expect.any(String), tittle: 'Some data', foo: 'bar' });
   });
 
-  it(`"/api/records" GET should populate stored entities`, async () => {
-    await request(server)
-      .post('/api/records')
-      .send({ title: 'Some data', foo: 'bar' });
-
-    await request(server)
-      .post('/api/records')
-      .send({ title: 'Another data', baz: 'wiz' });
-
+  it(`"/api/records" PUT should update an entity`, async () => {
+    const { body: entity } = await request(server).post('/api/records').send({ title: 'Some data', foo: 'bar' });
     const { body } = await request(server)
-      .get('/api/records')
+      .put(`/api/records/${entity.id}`)
+      .send({ id: entity.id, title: 'New title', newData: true })
       .expect(200)
       .expect('Content-Type', 'application/json');
+    expect(body).toBeDefined();
+    expect(body).toMatchObject({ id: entity.id, title: 'New title', newData: true });
+  });
+
+  it(`"/api/records" PUT should return 400 on invalid uuid`, async () =>
+    await request(server)
+      .put(`/api/records/not-a-id`)
+      .send({ title: 'New title', newData: true })
+      .expect(400)
+      .expect('Content-Type', 'text/plain'));
+
+  it(`"/api/records" PUT should return 404 on non-existed uuid`, async () =>
+    await request(server)
+      .put(`/api/records/97c44eb1-8c2f-4df0-a988-d6da5f2d9ee9`)
+      .send({ title: 'New title', newData: true })
+      .expect(404)
+      .expect('Content-Type', 'text/plain'));
+
+  it(`"/api/records" GET should populate stored entities`, async () => {
+    await request(server).post('/api/records').send({ title: 'Some data', foo: 'bar' });
+
+    await request(server).post('/api/records').send({ title: 'Another data', baz: 'wiz' });
+
+    const { body } = await request(server).get('/api/records').expect(200).expect('Content-Type', 'application/json');
 
     expect(body).toMatchObject([
-      { id: expect.any(String), value: { title: 'Some data', foo: 'bar' } },
-      { id: expect.any(String), value: { title: 'Another data', baz: 'wiz' } },
+      { id: expect.any(String), title: 'Some data', foo: 'bar' },
+      { id: expect.any(String), title: 'Another data', baz: 'wiz' },
     ]);
   });
 
@@ -63,7 +74,7 @@ describe('DBService tests', () => {
       .expect('Content-Type', 'text/plain')
       .expect('Method Not Allowed'));
 
-  it(`"/api/purge" DELETE should populate stored entities`, async () => {
+  it(`"/api/purge" DELETE should delete all stored entities`, async () => {
     await request(server)
       .post('/api/records')
       .send({ title: 'Some data', foo: 'bar' })

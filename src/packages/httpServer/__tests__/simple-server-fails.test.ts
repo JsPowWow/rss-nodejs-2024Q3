@@ -10,15 +10,12 @@ const testRoutes: RoutesConfig = {
   '/unsafe/undefined': undefined as unknown as RouteHandler,
   '/unsafe/getNull': () => null as unknown as RouteHandler,
   '/unsafe/getUndefined': () => undefined as unknown as RouteHandler,
-  '/unsafe/getNullAsync': async () =>
-    Promise.resolve(null as unknown as RouteHandler),
-  '/unsafe/getUndefinedAsync': async () =>
-    Promise.resolve(undefined as unknown as RouteHandler),
+  '/unsafe/getNullAsync': async () => Promise.resolve(null as unknown as RouteHandler),
+  '/unsafe/getUndefinedAsync': async () => Promise.resolve(undefined as unknown as RouteHandler),
   '/unsafe/throw': () => {
     throw new Error('Test Error1');
   },
-  '/unsafe/throwAsync': async () =>
-    Promise.reject(new Error('Test Error1 Async')),
+  '/unsafe/throwAsync': async () => Promise.reject(new Error('Test Error1 Async')),
 };
 
 describe('Server basics failure tests', () => {
@@ -38,29 +35,21 @@ describe('Server basics failure tests', () => {
   });
 
   beforeEach(() => {
-    jest
-      .spyOn(console, 'log')
-      .mockName('The "console.log"')
-      .mockImplementation(noop);
-    jest
-      .spyOn(console, 'error')
-      .mockName('The "console.error"')
-      .mockImplementation(noop);
+    jest.spyOn(console, 'log').mockName('The "console.log"').mockImplementation(noop);
+    jest.spyOn(console, 'error').mockName('The "console.error"').mockImplementation(noop);
   });
 
   it('should return 404 from non-existed route (/no-route)', async () => {
     const res = await request(server).get('/no-route');
     expect(res.statusCode).toBe(404);
-    expect(res.text).toEqual(
-      'The server has not found anything matching the Request /no-route',
-    );
+    expect(res.text).toEqual('Not found: The server has not found anything matching the Request "/no-route"');
   });
 
   it('should return 500 on nullish route config (/unsafe/null)', async () => {
     const res = await request(server)
       .get('/unsafe/null')
       .expect(500)
-      .expect('Internal Server Error')
+      .expect('Internal Server Error: The server has not properly configured for  Request "/unsafe/null"')
       .expect('Content-Type', 'text/plain');
     expect(res.body).toEqual({});
   });
@@ -85,7 +74,7 @@ describe('Server basics failure tests', () => {
     const res = await request(server)
       .get('/unsafe/undefined')
       .expect(500)
-      .expect('Internal Server Error')
+      .expect('Internal Server Error: The server has not properly configured for  Request "/unsafe/undefined"')
       .expect('Content-Type', 'text/plain');
     expect(res.body).toEqual({});
   });
@@ -110,7 +99,7 @@ describe('Server basics failure tests', () => {
     const res = await request(server)
       .get('/unsafe/throw')
       .expect(500)
-      .expect('Internal Server Error, cause by:\n"Test Error1"')
+      .expect('Internal Server Error: cause by:\n"Test Error1"')
       .expect('Content-Type', 'text/plain');
     expect(res.body).toEqual({});
   });
@@ -118,7 +107,7 @@ describe('Server basics failure tests', () => {
     const res = await request(server)
       .get('/unsafe/throwAsync')
       .expect(500)
-      .expect('Internal Server Error, cause by:\n"Test Error1 Async"')
+      .expect('Internal Server Error: cause by:\n"Test Error1 Async"')
       .expect('Content-Type', 'text/plain');
     expect(res.body).toEqual({});
   });

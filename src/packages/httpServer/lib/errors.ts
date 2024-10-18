@@ -1,25 +1,39 @@
 import { IncomingMessage, ServerResponse } from 'http';
 
+import { validate } from 'uuid';
+
+import { ClientIncomingMessage } from './types.ts';
 import { isNil } from '../../utils/common.ts';
 import { ErrorMessage } from '../../utils/error.ts';
+import { Nullable } from '../../utils/types.ts';
 
-export function assertIsRequestMethod(
+export function assertValidRequest(req: IncomingMessage): asserts req is ClientIncomingMessage {
+  if (!req || isNil(req.url) || isNil(req.method)) {
+    throw new Error(`Expect the "url" / "method" request to be provided.`);
+  }
+}
+
+export function assertRequestMethod(
   method: string,
   req: IncomingMessage,
 ): asserts req is Omit<IncomingMessage, 'method'> & { method: typeof method } {
   if (!(req.method === method)) {
-    throw new Error(
-      `Expect the "${method}" request method, but got ${req.method}"`,
-    );
+    throw new Error(`Expect the "${method}" request method, but got ${req.method}"`);
   }
 }
 
-export const withAssertHasDefinedData =
-  (res: ServerResponse) => (data: unknown) => {
-    if (!res.headersSent && isNil(data)) {
-      InternalServerError.throw();
-    }
-  };
+export function assertIsValidUUID(uuid: Nullable<string>): NonNullable<string> {
+  if (!uuid || !validate(uuid)) {
+    throw new Error(`Expect the valid "uuid" be provided, but got ${uuid}`);
+  }
+  return uuid;
+}
+
+export const withAssertHasDefinedData = (res: ServerResponse) => (data: unknown) => {
+  if (!res.headersSent && isNil(data)) {
+    InternalServerError.throw();
+  }
+};
 
 export class ServerError extends Error {
   status: number;
@@ -37,14 +51,12 @@ export class InternalServerError extends ServerError {
   constructor(message = '') {
     super(
       InternalServerError.CODE,
-      message ? `${message}` : `${InternalServerError.MESSAGE}`,
+      message ? `${InternalServerError.MESSAGE}: ${message}` : `${InternalServerError.MESSAGE}`,
     );
   }
 
   static from = (cause: unknown) => {
-    const error = new InternalServerError(
-      `${InternalServerError.MESSAGE}, cause by:\n"${ErrorMessage.of(cause)}"`,
-    );
+    const error = new InternalServerError(`cause by:\n"${ErrorMessage.of(cause)}"`);
     error.cause = cause;
     return error;
   };
@@ -54,7 +66,7 @@ export class InternalServerError extends ServerError {
   }
 
   static reThrowWith = (cause: unknown) => {
-    const error = new InternalServerError();
+    const error = new InternalServerError(`cause by:\n"${ErrorMessage.of(cause)}"`);
     error.cause = cause;
     throw error;
   };
@@ -65,10 +77,7 @@ export class NotFoundError extends ServerError {
   static CODE = 404;
 
   constructor(message = '') {
-    super(
-      NotFoundError.CODE,
-      message ? `${message}` : `${NotFoundError.MESSAGE}`,
-    );
+    super(NotFoundError.CODE, message ? `${NotFoundError.MESSAGE}: ${message}` : `${NotFoundError.MESSAGE}`);
   }
 
   static throw(message = '') {
@@ -76,29 +85,26 @@ export class NotFoundError extends ServerError {
   }
 
   static reThrowWith = (cause: unknown) => {
-    const error = new NotFoundError();
+    const error = new NotFoundError(`cause by:\n"${ErrorMessage.of(cause)}"`);
     error.cause = cause;
     throw error;
   };
 }
 
-export class BasRequestError extends ServerError {
+export class BadRequestError extends ServerError {
   static MESSAGE = 'Bad Request';
   static CODE = 400;
 
   constructor(message = '') {
-    super(
-      BasRequestError.CODE,
-      message ? `${message}` : `${BasRequestError.MESSAGE}`,
-    );
+    super(BadRequestError.CODE, message ? `${BadRequestError.MESSAGE}: ${message}` : `${BadRequestError.MESSAGE}`);
   }
 
   static throw(message = '') {
-    throw new BasRequestError(message);
+    throw new BadRequestError(message);
   }
 
   static reThrowWith = (cause: unknown) => {
-    const error = new BasRequestError();
+    const error = new BadRequestError(`cause by:\n"${ErrorMessage.of(cause)}"`);
     error.cause = cause;
     throw error;
   };
@@ -111,7 +117,7 @@ export class MethodNotAllowedError extends ServerError {
   constructor(message = '') {
     super(
       MethodNotAllowedError.CODE,
-      message ? `${message}` : `${MethodNotAllowedError.MESSAGE}`,
+      message ? `${MethodNotAllowedError.MESSAGE}: ${message}` : `${MethodNotAllowedError.MESSAGE}`,
     );
   }
 
@@ -120,7 +126,7 @@ export class MethodNotAllowedError extends ServerError {
   }
 
   static reThrowWith = (cause: unknown) => {
-    const error = new MethodNotAllowedError();
+    const error = new MethodNotAllowedError(`cause by:\n"${ErrorMessage.of(cause)}"`);
     error.cause = cause;
     throw error;
   };

@@ -44,15 +44,11 @@ export const ansi = Object.freeze({
   bgBrightCyan: concat('\x1b[106m'),
   bgBrightWhite: concat('\x1b[107m'),
   rgb: (r: number, g: number, b: number) => concat(`\x1b[38;2;${r};${g};${b}m`),
-  bgRgb: (r: number, g: number, b: number) =>
-    concat(`\x1b[48;2;${r};${g};${b}m`),
+  bgRgb: (r: number, g: number, b: number) => concat(`\x1b[48;2;${r};${g};${b}m`),
 });
 
 export const styledMsg =
-  (options: {
-    text: Parameters<typeof styleText>[0];
-    values?: Parameters<typeof styleText>[0];
-  }) =>
+  (options: { text: Parameters<typeof styleText>[0]; values?: Parameters<typeof styleText>[0] }) =>
   (strings: TemplateStringsArray, ...values: unknown[]) => {
     const formatText = options?.text ?? 'white';
     const formatValues = options?.values ?? formatText;

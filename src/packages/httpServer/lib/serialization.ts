@@ -12,5 +12,4 @@ const serializeByType: Record<string, ResponseDataResolver<never>> = {
   symbol: stringify,
 };
 
-export const getSerializerByValueType = (valueType: string) =>
-  serializeByType[valueType];
+export const getSerializerByValueType = (valueType: string) => serializeByType[valueType];

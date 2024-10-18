@@ -47,14 +47,8 @@ describe('Server basics tests', () => {
   });
 
   beforeEach(() => {
-    jest
-      .spyOn(console, 'log')
-      .mockName('The "console.log"')
-      .mockImplementation(noop);
-    jest
-      .spyOn(console, 'error')
-      .mockName('The "console.error"')
-      .mockImplementation(noop);
+    jest.spyOn(console, 'log').mockName('The "console.log"').mockImplementation(noop);
+    jest.spyOn(console, 'error').mockName('The "console.error"').mockImplementation(noop);
   });
 
   it('Get welcome greetings (string)', async () => {
@@ -107,9 +101,7 @@ describe('Server basics tests', () => {
   });
 
   it('Get user ((req) short payload function)', async () => {
-    const res = await request(server)
-      .get('/user-example/method/short')
-      .set('Cookie', ['aaa', 'bbb']);
+    const res = await request(server).get('/user-example/method/short').set('Cookie', ['aaa', 'bbb']);
     expect(res.statusCode).toBe(200);
     expect(res.text).toEqual(
       JSON.stringify({

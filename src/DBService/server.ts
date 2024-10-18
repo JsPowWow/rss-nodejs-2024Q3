@@ -1,57 +1,35 @@
-import { randomUUID } from 'node:crypto';
 import { resolve } from 'node:path';
 import { cwd } from 'process';
 
 import * as dotenv from 'dotenv';
 
-import {
-  MethodNotAllowedError,
-  RouteHandler,
-  RoutesConfig,
-  assertIsRequestMethod,
-  requestBodyAsync,
-  startServer,
-} from '../packages/httpServer';
+import { MethodNotAllowedError, RouteHandler, RoutesConfig, startServer } from '../packages/httpServer';
+import { createRecordWithStore } from './controllers/create-record.ts';
+import { retrieveRecordsWithStore } from './controllers/get-records.ts';
+import { deleteRecordsWithStore } from './controllers/purge-records.ts';
+import { updateRecordWithStore } from './controllers/update-record.ts';
+import { EntityRecords } from './models.ts';
 import { log, outputMsg } from '../packages/utils/logging.ts';
 
 dotenv.config({ path: resolve(cwd(), '.env') });
 
 const port = Number(process.env.DB_SERVICE_PORT) || 1700;
 
-type EntityRecord = { id: string; value: unknown };
+const DBValues: EntityRecords = new Map();
 
-const DBValues = new Map<string, EntityRecord>();
-
-const createRecord: RouteHandler = async ({ req, res }) => {
-  assertIsRequestMethod('POST', req);
-  const body = await requestBodyAsync(req);
-  const uuid = randomUUID();
-  const record = { id: uuid, value: JSON.parse(body) };
-  DBValues.set(uuid, record);
-  res.writeHead(201, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(record));
-};
-
-const retrieveRecords: RouteHandler = async ({ req, res }) => {
-  assertIsRequestMethod('GET', req);
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify(Array.from(DBValues.values())));
-};
-
-const deleteRecords: RouteHandler = async ({ req, res }) => {
-  assertIsRequestMethod('DELETE', req);
-  const currentSize = DBValues.size;
-  DBValues.clear();
-  res.writeHead(200, { 'Content-Type': 'application/json' });
-  res.end(JSON.stringify({ message: `Deleted ${currentSize} record(s)` }));
-};
+const createRecord = createRecordWithStore(DBValues);
+const updateRecord = updateRecordWithStore(DBValues);
+const getRecords = retrieveRecordsWithStore(DBValues);
+const deleteRecords = deleteRecordsWithStore(DBValues);
 
 const processRecordsApi: RouteHandler = async (ctx) => {
   switch (ctx.req.method) {
     case 'GET':
-      return retrieveRecords(ctx);
+      return getRecords(ctx);
     case 'POST':
       return createRecord(ctx);
+    case 'PUT':
+      return updateRecord(ctx);
     default:
       MethodNotAllowedError.throw();
   }
@@ -59,6 +37,7 @@ const processRecordsApi: RouteHandler = async (ctx) => {
 
 const routes: RoutesConfig = {
   '/api/records': processRecordsApi,
+  '/api/records/:recordId': processRecordsApi,
   '/api/purge': deleteRecords,
 };
 

@@ -1,23 +1,13 @@
 import { IncomingMessage, ServerResponse } from 'http';
 import { Server, createServer } from 'node:http';
 
-import {
-  InternalServerError,
-  NotFoundError,
-  ServerError,
-  withAssertHasDefinedData,
-} from './errors.ts';
+import { InternalServerError, ServerError, assertValidRequest, withAssertHasDefinedData } from './errors.ts';
 import { getSerializerByValueType } from './serialization.ts';
-import { ResponseDataResolver, ServerOptions } from './types.ts';
-import { endWith } from './utils.ts';
-import {
-  assertIsNonNullable,
-  isInstanceOf,
-  isNil,
-  isSomeFn,
-} from '../../utils/common.ts';
+import { ClientContext, ResponseDataResolver, ServerOptions } from './types.ts';
+import { endWith, processRoutesMatching } from './utils.ts';
+import { isInstanceOf, isSomeFn } from '../../utils/common.ts';
 import { ErrorMessage } from '../../utils/error.ts';
-import { errorMsg, log, logDebug } from '../../utils/logging.ts';
+import { errorMsg, log } from '../../utils/logging.ts';
 
 const ROUTE_HANDLER_PARAMS_LENGTH = 3;
 
@@ -31,20 +21,15 @@ const processErrors = (res: ServerResponse) => (err: unknown) => {
   }
 };
 
-const processRouteRequest: ResponseDataResolver<CallableFunction> = (
-  fn,
-  ctx,
-) => {
+const processRouteRequest: ResponseDataResolver<CallableFunction> = (fn, ctx) => {
   const { res, resolve } = ctx;
   if (fn.length === ROUTE_HANDLER_PARAMS_LENGTH) {
-    logDebug('here1');
     Promise.resolve(fn(ctx))
       .then(withAssertHasDefinedData(res))
       .catch((e: Error) => {
         return processErrors(res)(e);
       });
   } else {
-    logDebug('here2');
     Promise.resolve(fn(ctx))
       .then(resolve)
       .catch((e: Error) => {
@@ -53,25 +38,22 @@ const processRouteRequest: ResponseDataResolver<CallableFunction> = (
   }
 };
 
-const serve = (data: unknown, req: IncomingMessage, res: ServerResponse) => {
+const serve = (data: unknown, ctx: Omit<ClientContext, 'resolve'>) => {
   const dataType = typeof data;
 
   if (data === null) {
     InternalServerError.throw();
   }
-
+  const { res } = ctx;
   if (dataType === 'string') {
     return void res.end(data);
   }
-  const serialize = isSomeFn(data)
-    ? processRouteRequest
-    : getSerializerByValueType(dataType);
+  const serialize = isSomeFn(data) ? processRouteRequest : getSerializerByValueType(dataType);
 
   if (isSomeFn(serialize)) {
     serialize(data, {
-      req,
-      res,
-      resolve: (dto: unknown) => serve(dto, req, res),
+      ...ctx,
+      resolve: (dto: unknown) => serve(dto, ctx),
     });
   } else {
     withAssertHasDefinedData(res)(data);
@@ -88,17 +70,10 @@ export const startServer = (options: ServerOptions) => {
   const { routes = {} } = options ?? Object.create(null);
   const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     try {
-      assertIsNonNullable(req.url);
-      const route = routes[req.url];
-      if (req.url in routes && isNil(route)) {
-        InternalServerError.throw();
-      }
-      if (isNil(route)) {
-        NotFoundError.throw(
-          `The server has not found anything matching the Request ${req.url}`,
-        );
-      }
-      serve(routes[req.url], req, res);
+      assertValidRequest(req);
+      const { params, handler } = processRoutesMatching(routes, req.url);
+
+      serve(handler, { req, res, params });
     } catch (err: unknown) {
       processErrors(res)(err);
     }
