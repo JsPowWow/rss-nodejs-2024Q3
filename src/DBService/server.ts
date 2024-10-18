@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 
 import { MethodNotAllowedError, RouteHandler, RoutesConfig, startServer } from '../packages/httpServer';
 import { createRecordWithStore } from './controllers/create-record.ts';
+import { getRecordWithStore } from './controllers/get-record.ts';
 import { retrieveRecordsWithStore } from './controllers/get-records.ts';
 import { deleteRecordsWithStore } from './controllers/purge-records.ts';
 import { updateRecordWithStore } from './controllers/update-record.ts';
@@ -20,12 +21,13 @@ const DBValues: EntityRecords = new Map();
 const createRecord = createRecordWithStore(DBValues);
 const updateRecord = updateRecordWithStore(DBValues);
 const getRecords = retrieveRecordsWithStore(DBValues);
+const getRecord = getRecordWithStore(DBValues);
 const deleteRecords = deleteRecordsWithStore(DBValues);
 
 const processRecordsApi: RouteHandler = async (ctx) => {
   switch (ctx.req.method) {
     case 'GET':
-      return getRecords(ctx);
+      return ctx.req.url === '/api/records' ? getRecords(ctx) : getRecord(ctx);
     case 'POST':
       return createRecord(ctx);
     case 'PUT':
