@@ -5,6 +5,7 @@ import * as dotenv from 'dotenv';
 
 import { MethodNotAllowedError, RouteHandler, RoutesConfig, startServer } from '../packages/httpServer';
 import { createRecordWithStore } from './controllers/create-record.ts';
+import { deleteRecordWithStore } from './controllers/delete-record.ts';
 import { getRecordWithStore } from './controllers/get-record.ts';
 import { retrieveRecordsWithStore } from './controllers/get-records.ts';
 import { deleteRecordsWithStore } from './controllers/purge-records.ts';
@@ -19,19 +20,23 @@ const port = Number(process.env.DB_SERVICE_PORT) || 1700;
 const DBValues: EntityRecords = new Map();
 
 const createRecord = createRecordWithStore(DBValues);
+const readRecord = getRecordWithStore(DBValues);
 const updateRecord = updateRecordWithStore(DBValues);
+const deleteRecord = deleteRecordWithStore(DBValues);
+
 const getRecords = retrieveRecordsWithStore(DBValues);
-const getRecord = getRecordWithStore(DBValues);
 const deleteRecords = deleteRecordsWithStore(DBValues);
 
 const processRecordsApi: RouteHandler = async (ctx) => {
   switch (ctx.req.method) {
     case 'GET':
-      return ctx.req.url === '/api/records' ? getRecords(ctx) : getRecord(ctx);
+      return ctx.req.url === '/api/records' ? getRecords(ctx) : readRecord(ctx);
     case 'POST':
       return createRecord(ctx);
     case 'PUT':
       return updateRecord(ctx);
+    case 'DELETE':
+      return deleteRecord(ctx);
     default:
       MethodNotAllowedError.throw();
   }
