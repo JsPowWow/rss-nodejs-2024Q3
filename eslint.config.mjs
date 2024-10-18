@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
@@ -18,21 +19,11 @@ const compat = new FlatCompat({
 });
 
 export default [
+  eslintPluginPrettierRecommended,
   {
-    ignores: [
-      '**/.eslintrc.js',
-      '*.config.*',
-      'types/env.d.ts',
-      'process-env.d.ts',
-    ],
+    ignores: ['**/.eslintrc.js', '*.config.*', 'types/env.d.ts', 'process-env.d.ts'],
   },
-  ...compat.extends(
-    'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended',
-    'plugin:jest/recommended',
-    'plugin:import/recommended',
-    'plugin:import/typescript',
-  ),
+  ...compat.extends('plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended', 'plugin:jest/recommended', 'plugin:import/recommended', 'plugin:import/typescript'),
   {
     plugins: {
       '@typescript-eslint': typescriptEslintEslintPlugin,
