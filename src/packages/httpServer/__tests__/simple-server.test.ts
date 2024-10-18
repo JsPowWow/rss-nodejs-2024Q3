@@ -20,10 +20,10 @@ const testRoutes: RoutesConfig = {
   '/user-example': USER_DATA,
   '/user-example/name': () => USER_DATA.name.toUpperCase(),
   '/user-example/age': () => USER_DATA.age,
-  '/user-example/method/full': (req, res, resolve) => {
+  '/user-example/method/full': ({ req, res, resolve }) => {
     resolve({ status: res.statusCode, data: USER_DATA, url: req.url });
   },
-  '/user-example/method/short': (req) => ({
+  '/user-example/method/short': ({ req }) => ({
     user: USER_DATA,
     url: req.url,
     cookie: req.headers.cookie,

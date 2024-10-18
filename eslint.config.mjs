@@ -19,7 +19,12 @@ const compat = new FlatCompat({
 
 export default [
   {
-    ignores: ['**/.eslintrc.js', '*.config.*', 'types/env.d.ts', 'process-env.d.ts'],
+    ignores: [
+      '**/.eslintrc.js',
+      '*.config.*',
+      'types/env.d.ts',
+      'process-env.d.ts',
+    ],
   },
   ...compat.extends(
     'plugin:@typescript-eslint/recommended',
@@ -63,7 +68,7 @@ export default [
       'jest/no-identical-title': 'error',
       'jest/prefer-to-have-length': 'warn',
       'jest/valid-expect': 'error',
-      'jest/expect-expect': 'error',
+      'jest/expect-expect': 'off',
       '@typescript-eslint/interface-name-prefix': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',

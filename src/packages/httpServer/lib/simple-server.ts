@@ -8,7 +8,7 @@ import {
   withAssertHasDefinedData,
 } from './errors.ts';
 import { getSerializerByValueType } from './serialization.ts';
-import { ServerDataSerializer, ServerOptions } from './types.ts';
+import { ResponseDataResolver, ServerOptions } from './types.ts';
 import { endWith } from './utils.ts';
 import {
   assertIsNonNullable,
@@ -17,7 +17,7 @@ import {
   isSomeFn,
 } from '../../utils/common.ts';
 import { ErrorMessage } from '../../utils/error.ts';
-import { errorMsg, log } from '../../utils/logging.ts';
+import { errorMsg, log, logDebug } from '../../utils/logging.ts';
 
 const ROUTE_HANDLER_PARAMS_LENGTH = 3;
 
@@ -31,18 +31,21 @@ const processErrors = (res: ServerResponse) => (err: unknown) => {
   }
 };
 
-const processRouteRequest: ServerDataSerializer<CallableFunction> = (
-  [fn, req, res],
-  resolve,
+const processRouteRequest: ResponseDataResolver<CallableFunction> = (
+  fn,
+  ctx,
 ) => {
+  const { res, resolve } = ctx;
   if (fn.length === ROUTE_HANDLER_PARAMS_LENGTH) {
-    Promise.resolve(fn(req, res, resolve))
+    logDebug('here1');
+    Promise.resolve(fn(ctx))
       .then(withAssertHasDefinedData(res))
       .catch((e: Error) => {
         return processErrors(res)(e);
       });
   } else {
-    Promise.resolve(fn(req, res))
+    logDebug('here2');
+    Promise.resolve(fn(ctx))
       .then(resolve)
       .catch((e: Error) => {
         return processErrors(res)(e);
@@ -65,7 +68,11 @@ const serve = (data: unknown, req: IncomingMessage, res: ServerResponse) => {
     : getSerializerByValueType(dataType);
 
   if (isSomeFn(serialize)) {
-    serialize([data, req, res], (dto: unknown) => serve(dto, req, res));
+    serialize(data, {
+      req,
+      res,
+      resolve: (dto: unknown) => serve(dto, req, res),
+    });
   } else {
     withAssertHasDefinedData(res)(data);
   }

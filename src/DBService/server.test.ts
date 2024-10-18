@@ -1,7 +1,7 @@
 import request from 'supertest';
 
-import { noop } from '../../packages/utils/common.ts';
-import { DBService } from '../server.ts';
+import { DBService } from './server.ts';
+import { noop } from '../packages/utils/common.ts';
 
 describe('DBService tests', () => {
   const server = DBService.server;
@@ -55,6 +55,13 @@ describe('DBService tests', () => {
       { id: expect.any(String), value: { title: 'Another data', baz: 'wiz' } },
     ]);
   });
+
+  it(`"/api/records" PATCH should be rejected`, () =>
+    request(server)
+      .patch('/api/records')
+      .expect(405)
+      .expect('Content-Type', 'text/plain')
+      .expect('Method Not Allowed'));
 
   it(`"/api/purge" DELETE should populate stored entities`, async () => {
     await request(server)

@@ -81,3 +81,47 @@ export class NotFoundError extends ServerError {
     throw error;
   };
 }
+
+export class BasRequestError extends ServerError {
+  static MESSAGE = 'Bad Request';
+  static CODE = 400;
+
+  constructor(message = '') {
+    super(
+      BasRequestError.CODE,
+      message ? `${message}` : `${BasRequestError.MESSAGE}`,
+    );
+  }
+
+  static throw(message = '') {
+    throw new BasRequestError(message);
+  }
+
+  static reThrowWith = (cause: unknown) => {
+    const error = new BasRequestError();
+    error.cause = cause;
+    throw error;
+  };
+}
+
+export class MethodNotAllowedError extends ServerError {
+  static MESSAGE = 'Method Not Allowed';
+  static CODE = 405;
+
+  constructor(message = '') {
+    super(
+      MethodNotAllowedError.CODE,
+      message ? `${message}` : `${MethodNotAllowedError.MESSAGE}`,
+    );
+  }
+
+  static throw(message = '') {
+    throw new MethodNotAllowedError(message);
+  }
+
+  static reThrowWith = (cause: unknown) => {
+    const error = new MethodNotAllowedError();
+    error.cause = cause;
+    throw error;
+  };
+}

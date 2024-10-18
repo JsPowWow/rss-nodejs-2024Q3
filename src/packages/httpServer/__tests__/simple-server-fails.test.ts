@@ -7,7 +7,7 @@ import { RouteHandler, RoutesConfig, startServer } from '../index.ts';
 
 const testRoutes: RoutesConfig = {
   '/unsafe/null': null as unknown as RouteHandler,
-  '/unsafe/undefined': null as unknown as RouteHandler,
+  '/unsafe/undefined': undefined as unknown as RouteHandler,
   '/unsafe/getNull': () => null as unknown as RouteHandler,
   '/unsafe/getUndefined': () => undefined as unknown as RouteHandler,
   '/unsafe/getNullAsync': async () =>
@@ -19,16 +19,6 @@ const testRoutes: RoutesConfig = {
   },
   '/unsafe/throwAsync': async () =>
     Promise.reject(new Error('Test Error1 Async')),
-  '/unsafe/throw2': (_req, _res) => {
-    throw new Error('Test Error2');
-  },
-  '/unsafe/throw2Async': async (_req, _res) =>
-    Promise.reject(new Error('Test Error2 Async')),
-  '/unsafe/throw3': (_req, _res, _resolver) => {
-    new Error('Test Error3');
-  },
-  '/unsafe/throw3Async': async (_req, _res, _resolver) =>
-    Promise.reject(new Error('Test Error3 Async')),
 };
 
 describe('Server basics failure tests', () => {
@@ -129,38 +119,6 @@ describe('Server basics failure tests', () => {
       .get('/unsafe/throwAsync')
       .expect(500)
       .expect('Internal Server Error, cause by:\n"Test Error1 Async"')
-      .expect('Content-Type', 'text/plain');
-    expect(res.body).toEqual({});
-  });
-  it('should return 500 on error thrown (/unsafe/throw2)', async () => {
-    const res = await request(server)
-      .get('/unsafe/throw2')
-      .expect(500)
-      .expect('Internal Server Error, cause by:\n"Test Error2"')
-      .expect('Content-Type', 'text/plain');
-    expect(res.body).toEqual({});
-  });
-  it('should return 500 on error thrown (/unsafe/throw2Async)', async () => {
-    const res = await request(server)
-      .get('/unsafe/throw2Async')
-      .expect(500)
-      .expect('Internal Server Error, cause by:\n"Test Error2 Async"')
-      .expect('Content-Type', 'text/plain');
-    expect(res.body).toEqual({});
-  });
-  it('should return 500 on error thrown (/unsafe/throw3)', async () => {
-    const res = await request(server)
-      .get('/unsafe/throw3')
-      .expect(500)
-      .expect('Internal Server Error')
-      .expect('Content-Type', 'text/plain');
-    expect(res.body).toEqual({});
-  });
-  it('should return 500 on error thrown (/unsafe/throw3Async)', async () => {
-    const res = await request(server)
-      .get('/unsafe/throw3Async')
-      .expect(500)
-      .expect('Internal Server Error, cause by:\n"Test Error3 Async"')
       .expect('Content-Type', 'text/plain');
     expect(res.body).toEqual({});
   });

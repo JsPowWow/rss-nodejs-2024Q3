@@ -1,10 +1,10 @@
-import { ServerDataSerializer } from './types.ts';
+import { ResponseDataResolver } from './types.ts';
 
-const stringify: ServerDataSerializer = ([data], resolve) => {
+const stringify: ResponseDataResolver = (data, { resolve }) => {
   resolve(JSON.stringify(data));
 };
 
-const serializeByType: Record<string, ServerDataSerializer<never>> = {
+const serializeByType: Record<string, ResponseDataResolver<never>> = {
   boolean: stringify,
   bigint: stringify,
   number: stringify,

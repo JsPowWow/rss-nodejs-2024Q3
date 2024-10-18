@@ -5,6 +5,7 @@ import { cwd } from 'process';
 import * as dotenv from 'dotenv';
 
 import {
+  MethodNotAllowedError,
   RouteHandler,
   RoutesConfig,
   assertIsRequestMethod,
@@ -21,7 +22,7 @@ type EntityRecord = { id: string; value: unknown };
 
 const DBValues = new Map<string, EntityRecord>();
 
-const createRecord: RouteHandler = async (req, res) => {
+const createRecord: RouteHandler = async ({ req, res }) => {
   assertIsRequestMethod('POST', req);
   const body = await requestBodyAsync(req);
   const uuid = randomUUID();
@@ -31,13 +32,13 @@ const createRecord: RouteHandler = async (req, res) => {
   res.end(JSON.stringify(record));
 };
 
-const retrieveRecords: RouteHandler = async (req, res) => {
+const retrieveRecords: RouteHandler = async ({ req, res }) => {
   assertIsRequestMethod('GET', req);
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify(Array.from(DBValues.values())));
 };
 
-const deleteRecords: RouteHandler = async (req, res) => {
+const deleteRecords: RouteHandler = async ({ req, res }) => {
   assertIsRequestMethod('DELETE', req);
   const currentSize = DBValues.size;
   DBValues.clear();
@@ -45,12 +46,14 @@ const deleteRecords: RouteHandler = async (req, res) => {
   res.end(JSON.stringify({ message: `Deleted ${currentSize} record(s)` }));
 };
 
-const processRecordsApi: RouteHandler = async (req, res, resolver) => {
-  switch (req.method) {
+const processRecordsApi: RouteHandler = async (ctx) => {
+  switch (ctx.req.method) {
     case 'GET':
-      return retrieveRecords(req, res, resolver);
+      return retrieveRecords(ctx);
     case 'POST':
-      return createRecord(req, res, resolver);
+      return createRecord(ctx);
+    default:
+      MethodNotAllowedError.throw();
   }
 };
 

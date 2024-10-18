@@ -6,16 +6,12 @@ export type ServerOptions = {
   routes: RoutesConfig;
 };
 
-export type ServerDataSerializer<Data = unknown> = (
-  [data, req, res]: [Data, IncomingMessage, ServerResponse],
-  resolver: (v: unknown) => void,
+export type ResponseDataResolver<Data = unknown> = (
+  data: Data,
+  ctx: ClientContext,
 ) => void;
 
-export type RouteResolver = (
-  req: IncomingMessage,
-  res: ServerResponse,
-  resolver: (data: unknown) => void,
-) => void;
+export type RouteResolver = (context: ClientContext) => void;
 
 export type RouteHandler =
   | number
@@ -23,3 +19,9 @@ export type RouteHandler =
   | boolean
   | Record<string, unknown>
   | RouteResolver;
+
+export type ClientContext = {
+  req: IncomingMessage;
+  res: ServerResponse;
+  resolve: (data: unknown) => void;
+};
