@@ -3,7 +3,7 @@ import { Server } from 'http';
 import request from 'supertest';
 
 import { noop } from '../../utils/common.ts';
-import { Routes, startServer } from '../index.ts';
+import { RoutesConfig, startServer } from '../index.ts';
 
 const USER_DATA = Object.freeze({
   id: '68412a87-1843-4d92-b506-009e8fbcfb11',
@@ -13,7 +13,7 @@ const USER_DATA = Object.freeze({
   isActive: true,
 });
 
-const testRoutes: Routes = {
+const testRoutes: RoutesConfig = {
   '/': `Welcome to "users" in-memory database server`,
   '/user-example/ageNum': USER_DATA.age,
   '/user-example/active': USER_DATA.isActive,

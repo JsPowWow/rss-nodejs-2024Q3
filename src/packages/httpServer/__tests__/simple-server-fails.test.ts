@@ -3,17 +3,17 @@ import { Server } from 'http';
 import request from 'supertest';
 
 import { noop } from '../../utils/common.ts';
-import { RouteResolver, Routes, startServer } from '../index.ts';
+import { RouteHandler, RoutesConfig, startServer } from '../index.ts';
 
-const testRoutes: Routes = {
-  '/unsafe/null': null as unknown as RouteResolver,
-  '/unsafe/undefined': null as unknown as RouteResolver,
-  '/unsafe/getNull': () => null as unknown as RouteResolver,
-  '/unsafe/getUndefined': () => undefined as unknown as RouteResolver,
+const testRoutes: RoutesConfig = {
+  '/unsafe/null': null as unknown as RouteHandler,
+  '/unsafe/undefined': null as unknown as RouteHandler,
+  '/unsafe/getNull': () => null as unknown as RouteHandler,
+  '/unsafe/getUndefined': () => undefined as unknown as RouteHandler,
   '/unsafe/getNullAsync': async () =>
-    Promise.resolve(null as unknown as RouteResolver),
+    Promise.resolve(null as unknown as RouteHandler),
   '/unsafe/getUndefinedAsync': async () =>
-    Promise.resolve(undefined as unknown as RouteResolver),
+    Promise.resolve(undefined as unknown as RouteHandler),
   '/unsafe/throw': () => {
     throw new Error('Test Error1');
   },

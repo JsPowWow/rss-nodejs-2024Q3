@@ -1,9 +1,9 @@
 import { IncomingMessage, ServerResponse } from 'http';
 
-export type Routes = Record<string, RouteResolver>;
+export type RoutesConfig = Record<string, RouteHandler>;
 
 export type ServerOptions = {
-  routes: Routes;
+  routes: RoutesConfig;
 };
 
 export type ServerDataSerializer<Data = unknown> = (
@@ -11,13 +11,15 @@ export type ServerDataSerializer<Data = unknown> = (
   resolver: (v: unknown) => void,
 ) => void;
 
-export type RouteResolver =
+export type RouteResolver = (
+  req: IncomingMessage,
+  res: ServerResponse,
+  resolver: (data: unknown) => void,
+) => void;
+
+export type RouteHandler =
   | number
   | string
   | boolean
   | Record<string, unknown>
-  | ((
-      req: IncomingMessage,
-      res: ServerResponse,
-      resolver: (data: unknown) => void,
-    ) => void);
+  | RouteResolver;

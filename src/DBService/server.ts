@@ -5,8 +5,8 @@ import { cwd } from 'process';
 import * as dotenv from 'dotenv';
 
 import {
-  RouteResolver,
-  Routes,
+  RouteHandler,
+  RoutesConfig,
   assertIsRequestMethod,
   requestBodyAsync,
   startServer,
@@ -21,7 +21,7 @@ type EntityRecord = { id: string; value: unknown };
 
 const DBValues = new Map<string, EntityRecord>();
 
-const createRecord: RouteResolver = async (req, res) => {
+const createRecord: RouteHandler = async (req, res) => {
   assertIsRequestMethod('POST', req);
   const body = await requestBodyAsync(req);
   const uuid = randomUUID();
@@ -31,13 +31,13 @@ const createRecord: RouteResolver = async (req, res) => {
   res.end(JSON.stringify(record));
 };
 
-const retrieveRecords: RouteResolver = async (req, res) => {
+const retrieveRecords: RouteHandler = async (req, res) => {
   assertIsRequestMethod('GET', req);
   res.writeHead(200, { 'Content-Type': 'application/json' });
   res.end(JSON.stringify(Array.from(DBValues.values())));
 };
 
-const deleteRecords: RouteResolver = async (req, res) => {
+const deleteRecords: RouteHandler = async (req, res) => {
   assertIsRequestMethod('DELETE', req);
   const currentSize = DBValues.size;
   DBValues.clear();
@@ -45,7 +45,7 @@ const deleteRecords: RouteResolver = async (req, res) => {
   res.end(JSON.stringify({ message: `Deleted ${currentSize} record(s)` }));
 };
 
-const processRecordsApi: RouteResolver = async (req, res, resolver) => {
+const processRecordsApi: RouteHandler = async (req, res, resolver) => {
   switch (req.method) {
     case 'GET':
       return retrieveRecords(req, res, resolver);
@@ -54,7 +54,7 @@ const processRecordsApi: RouteResolver = async (req, res, resolver) => {
   }
 };
 
-const routes: Routes = {
+const routes: RoutesConfig = {
   '/api/records': processRecordsApi,
   '/api/purge': deleteRecords,
 };
