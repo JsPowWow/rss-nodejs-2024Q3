@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-type AnyFunc = (...arg: any) => any;
+export type AnyFunc = (...arg: any) => any;
 
 type PipeArgs<F extends AnyFunc[], Acc extends AnyFunc[] = []> = F extends [(...args: infer A) => infer B]
   ? [...Acc, (...args: A) => B]
@@ -36,6 +36,15 @@ export function tap(tapFn: AnyFunc) {
 
   return function passThrough(...args: unknown[]) {
     tapFn(...args);
+    return args.length === 1 ? args.shift() : [...args];
+  };
+}
+
+export function tapAsync(tapFn: AnyFunc) {
+  assertIsFunction(tapFn);
+
+  return async function passThrough(...args: unknown[]) {
+    await tapFn(...args);
     return args.length === 1 ? args.shift() : [...args];
   };
 }
