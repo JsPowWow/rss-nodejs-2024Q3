@@ -1,4 +1,4 @@
-import { AnyFunc, tap, tapAsync } from './fp.ts';
+import { AnyFunc, tap, tapAsync } from './fp';
 
 describe('Tap()', () => {
   it('Should throw when invalid arguments are provided', () => {

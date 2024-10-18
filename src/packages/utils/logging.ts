@@ -1,4 +1,4 @@
-import { ansi, styledMsg } from './styledConsole.ts';
+import { ansi, styledMsg } from './styledConsole';
 
 export const outputMsg = styledMsg({ text: 'cyan', values: 'yellowBright' });
 export const output2Msg = styledMsg({ text: 'magenta' });

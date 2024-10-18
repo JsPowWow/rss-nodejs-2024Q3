@@ -1,4 +1,4 @@
-import { ResponseDataResolver } from './types.ts';
+import { ResponseDataResolver } from './types';
 
 const stringify: ResponseDataResolver = (data, { resolve }) => {
   resolve(JSON.stringify(data));

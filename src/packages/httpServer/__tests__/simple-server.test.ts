@@ -2,8 +2,9 @@ import { Server } from 'http';
 
 import request from 'supertest';
 
-import { noop } from '../../utils/common.ts';
-import { RoutesConfig, startServer } from '../index.ts';
+import { noop } from '../../utils/common';
+import { startServer } from '../lib/simple-server';
+import { RoutesConfig } from '../lib/types';
 
 const USER_DATA = Object.freeze({
   id: '68412a87-1843-4d92-b506-009e8fbcfb11',

@@ -1,4 +1,4 @@
-import { isInstanceOf } from './common.ts';
+import { isInstanceOf } from './common';
 
 export type Path = RegExp | string;
 

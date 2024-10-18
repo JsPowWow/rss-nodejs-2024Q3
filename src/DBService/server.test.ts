@@ -1,8 +1,8 @@
 import request from 'supertest';
 
-import { DBService } from './server.ts';
+import { DBService } from './server';
 import { NotFoundError } from '../packages/httpServer';
-import { noop } from '../packages/utils/common.ts';
+import { noop } from '../packages/utils/common';
 
 describe('DBService tests', () => {
   const server = DBService.server;

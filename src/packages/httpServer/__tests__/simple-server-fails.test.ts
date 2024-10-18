@@ -2,8 +2,8 @@ import { Server } from 'http';
 
 import request from 'supertest';
 
-import { noop } from '../../utils/common.ts';
-import { RouteHandler, RoutesConfig, startServer } from '../index.ts';
+import { noop } from '../../utils/common';
+import { RouteHandler, RoutesConfig, startServer } from '../index';
 
 const testRoutes: RoutesConfig = {
   '/unsafe/null': null as unknown as RouteHandler,

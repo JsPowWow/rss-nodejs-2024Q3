@@ -6,9 +6,9 @@ import {
   assertRequestMethod,
   requestBodyAsync,
 } from '../../packages/httpServer';
-import { identity } from '../../packages/utils/common.ts';
-import { fromTry } from '../../packages/utils/fp/either.ts';
-import { EntityRecords, assertIsValidRecord } from '../models.ts';
+import { identity } from '../../packages/utils/common';
+import { fromTry } from '../../packages/utils/fp/either';
+import { EntityRecords, assertIsValidRecord } from '../models';
 
 export const updateRecordWithStore =
   (store: EntityRecords): ClientRequestResolver =>

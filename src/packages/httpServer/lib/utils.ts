@@ -1,9 +1,9 @@
 import { IncomingMessage, ServerResponse } from 'http';
 
-import { InternalServerError, NotFoundError, ServerError } from './errors.ts';
-import { MatchedRoute, RoutesConfig } from './types.ts';
-import { hasSome, isNil } from '../../utils/common.ts';
-import { matchPathUrl } from '../../utils/routeMatch.ts';
+import { InternalServerError, NotFoundError, ServerError } from './errors';
+import { MatchedRoute, RoutesConfig } from './types';
+import { hasSome, isNil } from '../../utils/common';
+import { matchPathUrl } from '../../utils/routeMatch';
 
 export const processRoutesMatching = (routes: RoutesConfig, url: string): MatchedRoute => {
   const matchedRoutes = Object.entries(routes)

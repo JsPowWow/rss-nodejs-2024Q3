@@ -1,5 +1,5 @@
-import os from 'node:os';
-import { styleText } from 'node:util';
+import os from 'os';
+import { styleText } from 'util';
 
 const concat =
   (str: string) =>

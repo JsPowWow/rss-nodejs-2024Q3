@@ -2,10 +2,10 @@ import { IncomingMessage, ServerResponse } from 'http';
 
 import { validate } from 'uuid';
 
-import { ClientIncomingMessage } from './types.ts';
-import { isNil } from '../../utils/common.ts';
-import { ErrorMessage } from '../../utils/error.ts';
-import { Nullable } from '../../utils/types.ts';
+import { ClientIncomingMessage } from './types';
+import { isNil } from '../../utils/common';
+import { ErrorMessage } from '../../utils/error';
+import { Nullable } from '../../utils/types';
 
 export function assertValidRequest(req: IncomingMessage): asserts req is ClientIncomingMessage {
   if (!req || isNil(req.url) || isNil(req.method)) {

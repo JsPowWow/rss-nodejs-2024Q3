@@ -23,7 +23,13 @@ export default [
   {
     ignores: ['**/.eslintrc.js', '*.config.*', 'types/env.d.ts', 'process-env.d.ts'],
   },
-  ...compat.extends('plugin:@typescript-eslint/recommended', 'plugin:prettier/recommended', 'plugin:jest/recommended', 'plugin:import/recommended', 'plugin:import/typescript'),
+  ...compat.extends(
+    'plugin:@typescript-eslint/recommended',
+    'plugin:prettier/recommended',
+    'plugin:jest/recommended',
+    'plugin:import/recommended',
+    'plugin:import/typescript',
+  ),
   {
     plugins: {
       '@typescript-eslint': typescriptEslintEslintPlugin,

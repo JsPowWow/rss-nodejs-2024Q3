@@ -1,17 +1,17 @@
-import { resolve } from 'node:path';
+import { resolve } from 'path';
 import { cwd } from 'process';
 
 import * as dotenv from 'dotenv';
 
 import { MethodNotAllowedError, RouteHandler, RoutesConfig, startServer } from '../packages/httpServer';
-import { createRecordWithStore } from './controllers/create-record.ts';
-import { deleteRecordWithStore } from './controllers/delete-record.ts';
-import { getRecordWithStore } from './controllers/get-record.ts';
-import { retrieveRecordsWithStore } from './controllers/get-records.ts';
-import { deleteRecordsWithStore } from './controllers/purge-records.ts';
-import { updateRecordWithStore } from './controllers/update-record.ts';
-import { EntityRecords } from './models.ts';
-import { log, outputMsg } from '../packages/utils/logging.ts';
+import { createRecordWithStore } from './controllers/create-record';
+import { deleteRecordWithStore } from './controllers/delete-record';
+import { getRecordWithStore } from './controllers/get-record';
+import { retrieveRecordsWithStore } from './controllers/get-records';
+import { deleteRecordsWithStore } from './controllers/purge-records';
+import { updateRecordWithStore } from './controllers/update-record';
+import { EntityRecords } from './models';
+import { log, outputMsg } from '../packages/utils/logging';
 
 dotenv.config({ path: resolve(cwd(), '.env') });
 

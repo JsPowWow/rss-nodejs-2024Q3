@@ -1,4 +1,4 @@
-import { randomUUID } from 'node:crypto';
+import { randomUUID } from 'crypto';
 
 import {
   BadRequestError,
@@ -6,7 +6,7 @@ import {
   assertRequestMethod,
   requestBodyAsync,
 } from '../../packages/httpServer';
-import { EntityRecords } from '../models.ts';
+import { EntityRecords } from '../models';
 
 export const createRecordWithStore =
   (store: EntityRecords): ClientRequestResolver =>

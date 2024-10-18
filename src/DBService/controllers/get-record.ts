@@ -5,9 +5,9 @@ import {
   assertIsValidUUID,
   assertRequestMethod,
 } from '../../packages/httpServer';
-import { identity } from '../../packages/utils/common.ts';
-import { fromTry } from '../../packages/utils/fp/either.ts';
-import { EntityRecords } from '../models.ts';
+import { identity } from '../../packages/utils/common';
+import { fromTry } from '../../packages/utils/fp/either';
+import { EntityRecords } from '../models';
 
 export const getRecordWithStore =
   (store: EntityRecords): ClientRequestResolver =>

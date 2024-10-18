@@ -1,5 +1,5 @@
 import { ClientRequestResolver, assertRequestMethod } from '../../packages/httpServer';
-import { EntityRecords } from '../models.ts';
+import { EntityRecords } from '../models';
 
 export const retrieveRecordsWithStore =
   (store: EntityRecords): ClientRequestResolver =>

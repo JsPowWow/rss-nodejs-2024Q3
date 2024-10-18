@@ -1,6 +1,6 @@
 import { validate } from 'uuid';
 
-import { isNil, isSome } from '../packages/utils/common.ts';
+import { isNil, isSome } from '../packages/utils/common';
 
 export type EntityRecord = { id: string; value: unknown };
 export type EntityRecords = Map<string, EntityRecord>;
