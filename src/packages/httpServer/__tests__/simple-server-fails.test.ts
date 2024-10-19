@@ -3,7 +3,7 @@ import { Server } from 'http';
 import request from 'supertest';
 
 import { noop } from '../../utils/common';
-import { RouteHandler, RoutesConfig, startServer } from '../index';
+import { RouteHandler, RoutesConfig, createHttpServer } from '../index';
 
 const testRoutes: RoutesConfig = {
   '/unsafe/null': null as unknown as RouteHandler,
@@ -23,7 +23,7 @@ describe('Server basics failure tests', () => {
   let stopServer: () => Promise<void>;
 
   beforeAll(async () => {
-    const { server: testServer, stopServer: stopTestServer } = startServer({
+    const { server: testServer, stopServer: stopTestServer } = createHttpServer({
       routes: testRoutes,
     });
     server = testServer;

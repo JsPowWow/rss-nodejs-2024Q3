@@ -3,7 +3,7 @@ import { Server } from 'http';
 import request from 'supertest';
 
 import { noop } from '../../utils/common';
-import { startServer } from '../lib/simple-server';
+import { createHttpServer } from '../lib/simple-server';
 import { RoutesConfig } from '../lib/types';
 
 const USER_DATA = Object.freeze({
@@ -36,7 +36,7 @@ describe('Server basics tests', () => {
   let stopServer: () => Promise<void>;
 
   beforeAll(async () => {
-    const { server: testServer, stopServer: stopTestServer } = startServer({
+    const { server: testServer, stopServer: stopTestServer } = createHttpServer({
       routes: testRoutes,
     });
     server = testServer;

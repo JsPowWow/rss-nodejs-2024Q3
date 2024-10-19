@@ -1,11 +1,11 @@
 import request from 'supertest';
 
-import { DBService } from './server';
-import { NotFoundError } from '../packages/httpServer';
-import { noop } from '../packages/utils/common';
+import { NotFoundError } from '../../packages/httpServer';
+import { noop } from '../../packages/utils/common';
+import { DEFAULT_PORT, startMemoryDBService } from '../DBMemoryServiceServer';
 
 describe('DBService tests', () => {
-  const server = DBService.server;
+  const { server, stopServer } = startMemoryDBService(DEFAULT_PORT + 500);
   const enableConsole = false; // TODO AR disable enableConsole
   beforeEach(async () => {
     if (!enableConsole) {
@@ -17,7 +17,7 @@ describe('DBService tests', () => {
   });
 
   afterAll(async () => {
-    await DBService.stopServer();
+    await stopServer();
   });
 
   it(`"/api/records" GET should return 200 with a stored entities`, async () => {

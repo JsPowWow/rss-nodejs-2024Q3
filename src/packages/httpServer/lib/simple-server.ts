@@ -65,7 +65,7 @@ const stopServer = async (server: Server) => {
   });
 };
 
-export const startServer = (options: ServerOptions) => {
+export const createHttpServer = (options: ServerOptions) => {
   const { routes = {} } = options ?? Object.create(null);
   const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     try {
