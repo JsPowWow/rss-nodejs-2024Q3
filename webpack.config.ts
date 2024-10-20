@@ -2,7 +2,7 @@ import path from 'path';
 import { Configuration } from 'webpack';
 
 const config: Configuration = {
-  entry: ['./src/DBService/server.ts'],
+  entry: ['./src/standalone.ts'],
   module: {
     rules: [
       {
@@ -16,7 +16,7 @@ const config: Configuration = {
     extensions: ['.ts', '.js'],
   },
   output: {
-    filename: 'DBService.js',
+    filename: 'UsersSrvStandalone.js',
     path: path.resolve(__dirname, 'dist'),
   },
   target: 'node',

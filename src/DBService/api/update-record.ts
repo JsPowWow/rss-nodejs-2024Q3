@@ -14,7 +14,7 @@ export const updateRecordWithStore =
   (store: EntityRecords): ClientRequestResolver =>
   async ({ req, res, params }) => {
     assertRequestMethod('PUT', req);
-    const recordId = fromTry(() => assertIsValidUUID(params.recordId)).match(BadRequestError.reThrowWith, identity);
+    const recordId = fromTry(() => assertIsValidUUID(params?.recordId)).match(BadRequestError.reThrowWith, identity);
 
     if (!store.has(recordId)) {
       NotFoundError.throw(`Record with id ${recordId} not found.`);
@@ -22,9 +22,9 @@ export const updateRecordWithStore =
     const record = await requestBodyAsync(req).then(JSON.parse);
 
     fromTry(() => assertIsValidRecord(record))
-      .tapRight((r) => store.set(r.id, r))
-      .match(BadRequestError.reThrowWith, (r) => {
+      .tapRight((r) => store.set(recordId, { ...r, id: recordId }))
+      .match(BadRequestError.reThrowWith, () => {
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify(r));
+        res.end(JSON.stringify(store.get(recordId)));
       });
   };

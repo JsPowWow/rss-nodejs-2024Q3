@@ -8,7 +8,7 @@ Accept: application/json
 }
 
 ### /api/records POPULATE
-GET http://localhost:5000//api/records HTTP/1.1
+GET http://localhost:5000/api/records HTTP/1.1
 Accept: application/json
 
 ### Get bad route

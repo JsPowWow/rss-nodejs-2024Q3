@@ -12,4 +12,7 @@ const memoryDbPort = Number(process.env.MEMORY_DB_SERVICE_PORT) || DB_SERVICE_DE
 const usersServicePort = Number(process.env.USERS_SERVICE_PORT) || USERS_SERVICE_DEFAULT_PORT;
 
 startMemoryDBService(memoryDbPort);
-startUsersService(usersServicePort);
+startUsersService({
+  port: usersServicePort,
+  dbServiceUrl: '<<TODO>>',
+});

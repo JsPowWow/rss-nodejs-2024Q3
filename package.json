@@ -8,8 +8,8 @@
     "node": ">=22.0.0"
   },
   "scripts": {
-    "start:dev": "nodemon --exec ts-node src/DBService/DBMemoryServiceServer.ts & src/UsersService/UsersServiceServer.ts",
-    "start:prod": "npm run build && node dist/DBService.js",
+    "start:dev": "nodemon --exec ts-node src/standalone.ts",
+    "start:prod": "npm run build && node dist/UsersSrvStandalone.js",
     "start:multi": "npm run build && node dist/cluster.js",
     "build": "webpack --mode production",
     "test": "jest",

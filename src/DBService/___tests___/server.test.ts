@@ -5,8 +5,8 @@ import { noop } from '../../packages/utils/common';
 import { DEFAULT_PORT, startMemoryDBService } from '../DBMemoryServiceServer';
 
 describe('DBService tests', () => {
-  const { server, stopServer } = startMemoryDBService(DEFAULT_PORT + 500);
-  const enableConsole = false; // TODO AR disable enableConsole
+  const { server, stopServer } = startMemoryDBService(DEFAULT_PORT + 300);
+  const enableConsole = false;
   beforeEach(async () => {
     if (!enableConsole) {
       jest.spyOn(console, 'log').mockName('The "console.log"').mockImplementation(noop);

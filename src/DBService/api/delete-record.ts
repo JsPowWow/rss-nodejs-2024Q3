@@ -13,7 +13,7 @@ export const deleteRecordWithStore =
   (store: EntityRecords): ClientRequestResolver =>
   async ({ req, res, params }) => {
     assertRequestMethod('DELETE', req);
-    const recordId = fromTry(() => assertIsValidUUID(params.recordId)).match(BadRequestError.reThrowWith, identity);
+    const recordId = fromTry(() => assertIsValidUUID(params?.recordId)).match(BadRequestError.reThrowWith, identity);
 
     if (!store.has(recordId)) {
       NotFoundError.throw(`Record with id ${recordId} not found.`);
