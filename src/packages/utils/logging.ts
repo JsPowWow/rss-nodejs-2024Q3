@@ -2,7 +2,7 @@ import { ansi, styledMsg } from './styledConsole';
 
 export const outputMsg = styledMsg({ text: 'cyan', values: 'yellowBright' });
 export const output2Msg = styledMsg({ text: 'magenta', values: 'blueBright' });
-export const output3Msg = styledMsg({ text: 'whiteBright' });
+export const output3Msg = styledMsg({ text: 'bgBlueBright' });
 export const warningMsg = styledMsg({
   text: ['yellow', 'italic'],
   values: ['yellowBright', 'italic'],

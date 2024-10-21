@@ -3,7 +3,7 @@ import { createHttpServer } from '../packages/httpServer';
 import { ErrorMessage } from '../packages/utils/error';
 import { errorMsg, log, output2Msg, outputMsg } from '../packages/utils/logging';
 
-export const DEFAULT_PORT = 7000;
+export const DEFAULT_PORT = 4000;
 export const SERVER_NAME = 'Users';
 
 type UsersServiceOptions = {
@@ -32,13 +32,8 @@ export const startUsersService = ({ port, dbServiceUrl }: UsersServiceOptions) =
       );
     },
   });
-  usersService.server
-    .listen(port)
-    .on('listening', () => {
-      log(output2Msg`Running 👬 ${SERVER_NAME} on port ${srvPort}`);
-    })
-    .on('request', (req) => {
-      log(outputMsg`👬 ${SERVER_NAME} ||||||| ➡️ ${req.method}\t${req.url}`);
-    });
+  usersService.server.listen(port).on('listening', () => {
+    log(output2Msg`Running 👬 ${SERVER_NAME} on port ${srvPort}`);
+  });
   return usersService;
 };
