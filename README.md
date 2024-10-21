@@ -47,7 +47,8 @@ npm ci
 npm run test
 ```
 `npm run test` is to run various e2e test(s) and scenarios from the `src/__tests__/` folder
-![img.png](src/docs/img/tests.png)
+
+![tests.png](src/docs/img/tests.png)
 
 ---
 
@@ -57,6 +58,7 @@ npm run start:dev
 
 `npm run start:dev` is to run application in `standalone` mode. The `memory DB` and `users service`should start,
 on appropriate ports which are defined in `.env` and ready to listening requests from `http://localhost:4000/api/users` endpoint.
+
 ![standalone.png](src/docs/img/standalone.png)
 
 ---
@@ -72,6 +74,8 @@ Load balancer distributes requests across them (using Round-robin algorithm).
 After all worker services are up and running - balancer is ready to listening requests from `http://localhost:4000/api/users` endpoint.
 
 ![balancer.png](src/docs/img/balancer.png)
+
+---
 
 You can check the **production** versions by running appropriate:
 
