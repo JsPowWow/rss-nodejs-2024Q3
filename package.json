@@ -9,8 +9,9 @@
   },
   "scripts": {
     "start:dev": "nodemon --exec ts-node src/standalone.ts",
-    "start:prod": "npm run build && node dist/UsersSrvStandalone.js",
-    "start:multi": "npm run build && node dist/cluster.js",
+    "start:multi": "nodemon --exec ts-node src/balancer.ts",
+    "start:prod": "npm run build && node dist/standalone.js",
+    "start:prod:multi": "npm run build && node dist/balancer.js",
     "build": "webpack --mode production",
     "test": "jest",
     "type-check": "tsc --noEmit",

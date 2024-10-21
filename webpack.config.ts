@@ -2,7 +2,7 @@ import path from 'path';
 import { Configuration } from 'webpack';
 
 const config: Configuration = {
-  entry: ['./src/standalone.ts'],
+  entry: { standalone: './src/standalone.ts', balancer: './src/balancer.ts' },
   module: {
     rules: [
       {
@@ -16,7 +16,7 @@ const config: Configuration = {
     extensions: ['.ts', '.js'],
   },
   output: {
-    filename: 'UsersSrvStandalone.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
   },
   target: 'node',
