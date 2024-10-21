@@ -47,6 +47,7 @@ npm ci
 ```bash
 npm run start:dev
 ```
+
 `npm run start:dev` is to run application in `standalone` mode. The `memory DB` and `users service`should start,
 on appropriate ports which are defined in `.env` and ready to listening requests from `http://localhost:4000/api/users` endpoint.
 ![standalone.png](src/docs/img/standalone.png)
