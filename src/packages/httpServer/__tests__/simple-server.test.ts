@@ -37,6 +37,7 @@ describe('Server basics tests', () => {
 
   beforeAll(async () => {
     const { server: testServer, stopServer: stopTestServer } = createHttpServer({
+      serverName: 'testServer',
       routes: testRoutes,
     });
     server = testServer;

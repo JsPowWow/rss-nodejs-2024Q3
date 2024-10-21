@@ -1,7 +1,11 @@
 import { IncomingMessage, ServerResponse } from 'http';
 
 export type ServerOptions = {
+  serverName: string;
   routes: RoutesConfig;
+  onRequestIncome?: (ctx: ProcessRequestContext) => void;
+  onRequestFinished?: (ctx: ProcessRequestContext) => void;
+  onRequestError?: (ctx: ProcessRequestContext & { err: Error }) => void;
 };
 
 export type RoutesConfig = Record<string, RouteHandler>;
@@ -24,7 +28,14 @@ export type ClientIncomingMessage = Omit<IncomingMessage, 'url' | 'method'> & {
   url: NonNullable<string>;
 };
 
+export type ProcessRequestContext = {
+  req: IncomingMessage;
+  res: ServerResponse;
+  serverOptions: ServerOptions;
+};
+
 export type ClientContext = {
+  serverOptions: ServerOptions;
   req: ClientIncomingMessage;
   params: Record<string, string>;
   res: ServerResponse;

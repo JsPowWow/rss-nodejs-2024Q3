@@ -24,6 +24,7 @@ describe('Server basics failure tests', () => {
 
   beforeAll(async () => {
     const { server: testServer, stopServer: stopTestServer } = createHttpServer({
+      serverName: 'testServer',
       routes: testRoutes,
     });
     server = testServer;

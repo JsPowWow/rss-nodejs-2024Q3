@@ -2,21 +2,18 @@ import { IncomingMessage, Server, ServerResponse, createServer } from 'http';
 
 import { InternalServerError, ServerError, assertValidRequest, withAssertHasDefinedData } from './errors';
 import { getSerializerByValueType } from './serialization';
-import { ClientContext, ResponseDataResolver, ServerOptions } from './types';
+import { ClientContext, ProcessRequestContext, ResponseDataResolver, ServerOptions } from './types';
 import { endWith, processRoutesMatching } from './utils';
 import { isInstanceOf, isSomeFn } from '../../utils/common';
-import { ErrorMessage } from '../../utils/error';
-import { errorMsg, log } from '../../utils/logging';
 
 const ROUTE_HANDLER_PARAMS_LENGTH = 3;
 
-const processErrors = (res: ServerResponse) => (err: unknown) => {
-  const errorMessage = ErrorMessage.from(err);
+const processErrors = (ctx: ProcessRequestContext) => (err: unknown) => {
   if (isInstanceOf(ServerError, err)) {
-    log(errorMsg`Error occurred: ${err.status} ${errorMessage}`);
-    endWith(err, res);
+    endWith(err, ctx.res);
+    ctx?.serverOptions?.onRequestError?.({ ...ctx, err });
   } else {
-    processErrors(res)(InternalServerError.from(err));
+    processErrors(ctx)(InternalServerError.from(err));
   }
 };
 
@@ -25,15 +22,11 @@ const processRouteRequest: ResponseDataResolver<CallableFunction> = (fn, ctx) =>
   if (fn.length === ROUTE_HANDLER_PARAMS_LENGTH) {
     Promise.resolve(fn(ctx))
       .then(withAssertHasDefinedData(res))
-      .catch((e: Error) => {
-        return processErrors(res)(e);
-      });
+      .catch(processErrors({ req: ctx.req, res: ctx.res, serverOptions: ctx.serverOptions }));
   } else {
     Promise.resolve(fn(ctx))
       .then(resolve)
-      .catch((e: Error) => {
-        return processErrors(res)(e);
-      });
+      .catch(processErrors({ req: ctx.req, res: ctx.res, serverOptions: ctx.serverOptions }));
   }
 };
 
@@ -65,16 +58,21 @@ const stopServer = async (server: Server) => {
   });
 };
 
-export const createHttpServer = (options: ServerOptions) => {
-  const { routes = {} } = options ?? Object.create(null);
+export const createHttpServer = (serverOptions: ServerOptions) => {
+  const { routes = {} } = serverOptions ?? Object.create(null);
   const server = createServer((req: IncomingMessage, res: ServerResponse) => {
     try {
+      serverOptions?.onRequestIncome?.({ req, res, serverOptions });
       assertValidRequest(req);
       const { params, handler } = processRoutesMatching(routes, req.url);
 
-      serve(handler, { req, res, params });
+      serve(handler, { req, res, params, serverOptions });
+
+      res.on('finish', () => {
+        serverOptions?.onRequestFinished?.({ req, res, serverOptions });
+      });
     } catch (err: unknown) {
-      processErrors(res)(err);
+      processErrors({ req, res, serverOptions })(err);
     }
   });
 
