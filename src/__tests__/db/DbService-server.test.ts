@@ -1,8 +1,8 @@
 import request from 'supertest';
 
+import { DEFAULT_PORT, startMemoryDBService } from '../../DBService/DBMemoryServiceServer';
 import { NotFoundError } from '../../packages/httpServer';
 import { noop } from '../../packages/utils/common';
-import { DEFAULT_PORT, startMemoryDBService } from '../DBMemoryServiceServer';
 
 describe('DBService tests', () => {
   const { server, stopServer } = startMemoryDBService(DEFAULT_PORT + 300);

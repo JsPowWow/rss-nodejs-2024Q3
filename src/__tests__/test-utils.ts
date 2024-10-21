@@ -1,7 +1,7 @@
-import { DEFAULT_PORT as MEM_DB_PORT, startMemoryDBService } from '../../DBService/DBMemoryServiceServer';
-import { noop } from '../../packages/utils/common';
-import { User } from '../models';
-import { DEFAULT_PORT as USERS_SERVICE_PORT, startUsersService } from '../UsersServiceServer';
+import { DEFAULT_PORT as MEM_DB_PORT, startMemoryDBService } from '../DBService/DBMemoryServiceServer';
+import { noop } from '../packages/utils/common';
+import { User } from '../UsersService/models';
+import { DEFAULT_PORT as USERS_SERVICE_PORT, startUsersService } from '../UsersService/UsersServiceServer';
 
 export const startTestServers = (port: number) => {
   const { server: memDbServer, stopServer: stopMemDbServer } = startMemoryDBService(MEM_DB_PORT + port);

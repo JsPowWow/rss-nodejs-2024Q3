@@ -1,9 +1,9 @@
 import request from 'supertest';
 
-import { enableConsoleLogging, getUserBody, startTestServers } from '../UsersService/__tests__/test-utils';
+import { enableConsoleLogging, getUserBody, startTestServers } from './test-utils';
 
 describe('DBService tests', () => {
-  const { usersServer, memDbServer, stopUsersServer, stopMemDbServer } = startTestServers(777);
+  const { usersServer, memDbServer, stopUsersServer, stopMemDbServer } = startTestServers(888);
   beforeEach(async () => {
     enableConsoleLogging(false);
     await request(memDbServer).delete('/api/purge');
@@ -21,7 +21,7 @@ describe('DBService tests', () => {
    * 3. A new another object is created by a POST api/users request (a response containing newly created record expected)
    * 4. With a GET api/users/ request, we try to get the created records (the created records expected)
    */
-  it(`"Scenario #1 should pass successfully`, async () => {
+  it(`"Scenario #2 should pass successfully`, async () => {
     // 1. Get all records with a GET api/users request (an empty array is expected)
     const { body: usersInitial } = await request(usersServer)
       .get('/api/users')

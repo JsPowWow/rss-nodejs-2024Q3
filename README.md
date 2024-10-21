@@ -43,6 +43,13 @@ npm ci
 ## Testing
 
 ### There are few cli commands prepared to run application in different mode
+```bash
+npm run test
+```
+`npm run test` is to run various e2e test(s) and scenarios from the `src/__tests__/` folder
+![img.png](src/docs/img/tests.png)
+
+---
 
 ```bash
 npm run start:dev

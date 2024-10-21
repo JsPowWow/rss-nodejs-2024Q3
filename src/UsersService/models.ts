@@ -4,7 +4,7 @@ import { WithOptional } from '../packages/utils/types';
 
 export type User = {
   id: string;
-  name: string;
+  name: string; // TODO AR
   age: number;
   hobbies: Array<string>;
 };

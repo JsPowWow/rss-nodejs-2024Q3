@@ -1,7 +1,7 @@
 import request from 'supertest';
 
-import { enableConsoleLogging, getUserBody, startTestServers } from './test-utils';
 import { NotFoundError } from '../../packages/httpServer';
+import { enableConsoleLogging, getUserBody, startTestServers } from '../test-utils';
 
 describe('DBService tests', () => {
   const { usersServer, memDbServer, stopUsersServer, stopMemDbServer } = startTestServers(503);

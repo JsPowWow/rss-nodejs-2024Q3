@@ -1,6 +1,6 @@
 import request from 'supertest';
 
-import { enableConsoleLogging, getUserBody, startTestServers } from './test-utils';
+import { enableConsoleLogging, getUserBody, startTestServers } from '../test-utils';
 
 describe('DBService POST tests', () => {
   const { usersServer, memDbServer, stopUsersServer, stopMemDbServer } = startTestServers(501);
