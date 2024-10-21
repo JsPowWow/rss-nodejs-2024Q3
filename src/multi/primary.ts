@@ -13,7 +13,7 @@ import { DEFAULT_PORT } from '../UsersService/UsersServiceServer';
 dotenv.config({ path: resolve(__dirname, './../../.env') });
 
 const memoryDbPort = Number(process.env.MEMORY_DB_SERVICE_PORT) || DB_SERVICE_DEFAULT_PORT;
-const loadBalancerPort = Number(process.env.USERS_SERVICE_PORT) || DEFAULT_PORT;
+const loadBalancerPort = Number(process.env.LOAD_BALANCER_PORT) || DEFAULT_PORT;
 
 async function* roundRobinGenerator(initialValue: number, maxValue: number): AsyncGenerator<number, number> {
   let currentValue = initialValue;
@@ -25,7 +25,7 @@ async function* roundRobinGenerator(initialValue: number, maxValue: number): Asy
   }
 }
 
-log(output3Msg`👩‍✈️The primary cluster is started. `);
+log(output3Msg`👩‍✈️The primary cluster is started on port ${loadBalancerPort}. `);
 
 startMemoryDBService(memoryDbPort);
 
