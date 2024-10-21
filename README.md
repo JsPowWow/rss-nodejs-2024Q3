@@ -67,7 +67,7 @@ on appropriate ports which are defined in `.env` and ready to listening requests
 npm run start:multi
 ```
 `npm run start:multi` is to run application in `load-balancer` mode. 
-The `primary cluster` and `memory DB`should start on appropriate ports which are defined in `.env`.
+The `primary cluster` and `memory DB` service should start on appropriate ports which are defined in `.env`.
 Depends on Your machine `availableParallelism` cpus count, appropriate amount of child workers with embedded `users service`'s
 should start and running each listening on port `{LOAD_BALANCER_PORT + appropriate worker number}`.
 Load balancer distributes requests across them (using Round-robin algorithm).
@@ -107,6 +107,11 @@ killall node
 ---
 
 ## Implementation details
+
+#### TLDR
+There is `src/__tests__/api.http` file to help perform http request(s) using Your IDE
+
+### What is done:
 
 1. Implemented endpoint `http://localhost:4000/api/users`:
    - **GET** `http://localhost:4000/api/users` is used to get all persons
