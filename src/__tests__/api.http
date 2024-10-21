@@ -1,0 +1,35 @@
+### Create User
+POST http://localhost:4000/api/users HTTP/1.1
+Accept: application/json
+
+{
+  "age": 2002,
+  "name": "SuperHero",
+  "hobbies": ["javascript"]
+}
+
+### Get User
+GET http://localhost:4000/api/users/the-user-id-here HTTP/1.1
+
+
+### Get ALL Users
+GET http://localhost:4000/api/users HTTP/1.1
+
+
+### Update User
+PUT http://localhost:4000/api/users/the-user-id-here HTTP/1.1
+Accept: application/json
+
+{
+  "age": 40,
+  "name": "SuperHeroWithNewName",
+  "hobbies": ["node", "react"]
+}
+
+### Delete User
+DELETE http://localhost:4000/api/users/the-user-id-here HTTP/1.1
+
+
+### Get bad route
+GET http://localhost:4000/no-such-route HTTP/1.1
+Accept: application/json
