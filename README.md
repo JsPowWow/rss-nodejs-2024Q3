@@ -51,6 +51,7 @@ npm run start:dev
 `npm run start:dev` is to run application in `standalone` mode. The `memory DB` and `users service`should start,
 on appropriate ports which are defined in `.env` and ready to listening requests from `http://localhost:4000/api/users` endpoint.
 ![standalone.png](src/docs/img/standalone.png)
+
 ---
 
 ```bash
@@ -62,6 +63,7 @@ Depends on Your machine `availableParallelism` cpus count, appropriate amount of
 should start and running each listening on port `{LOAD_BALANCER_PORT + appropriate worker number}`.
 Load balancer distributes requests across them (using Round-robin algorithm).
 After all worker services are up and running - balancer is ready to listening requests from `http://localhost:4000/api/users` endpoint.
+
 ![balancer.png](src/docs/img/balancer.png)
 
 You can check the **production** versions by running appropriate:
