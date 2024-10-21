@@ -22,7 +22,7 @@ describe('DBService POST tests', () => {
       .expect(201)
       .expect('Content-Type', 'application/json');
 
-    expect(body).toMatchObject({ id: expect.any(String), name: 'Alex', age: 33, hobbies: ['basketball', 'anime'] });
+    expect(body).toStrictEqual({ id: expect.any(String), name: 'Alex', age: 33, hobbies: ['basketball', 'anime'] });
   });
 
   it(`"/api/users" POST should return 400 with empty body`, async () => {

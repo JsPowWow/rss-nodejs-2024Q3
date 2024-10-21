@@ -28,13 +28,13 @@ describe('DBService GET tests', () => {
       .get(`/api/users/${user1.id}`)
       .expect(200)
       .expect('Content-Type', 'application/json');
-    expect(user1Response).toMatchObject({ id: user1.id, name: 'Alex', age: 33, hobbies: ['anime'] });
+    expect(user1Response).toStrictEqual({ id: user1.id, name: 'Alex', age: 33, hobbies: ['anime'] });
 
     const { body: user2Response } = await request(usersServer)
       .get(`/api/users/${user2.id}`)
       .expect(200)
       .expect('Content-Type', 'application/json');
-    expect(user2Response).toMatchObject({ id: user2.id, name: 'Olga', age: 17, hobbies: ['cars'] });
+    expect(user2Response).toStrictEqual({ id: user2.id, name: 'Olga', age: 17, hobbies: ['cars'] });
   });
 
   it(`"/api/users/something" GET should return 400 on invalid uuid`, async () => {

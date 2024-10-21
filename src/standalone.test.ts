@@ -37,14 +37,14 @@ describe('DBService tests', () => {
     const { body: user1 } = await request(usersServer)
       .post('/api/users')
       .send(getUserBody({ name: 'Alex', age: 33 }, 'anime'));
-    expect(user1).toMatchObject({ id: expect.any(String), name: 'Alex', age: 33, hobbies: ['anime'] });
+    expect(user1).toStrictEqual({ id: expect.any(String), name: 'Alex', age: 33, hobbies: ['anime'] });
 
     // 3. With a GET api/user/{userId} request, we try to get the created record by its id (the created record is expected)
     const { body: user1GetResponse } = await request(usersServer)
       .get(`/api/users/${user1.id}`)
       .expect(200)
       .expect('Content-Type', 'application/json');
-    expect(user1GetResponse).toMatchObject({ id: user1.id, name: 'Alex', age: 33, hobbies: ['anime'] });
+    expect(user1GetResponse).toStrictEqual({ id: user1.id, name: 'Alex', age: 33, hobbies: ['anime'] });
 
     // 4. We try to update the created record with a PUT api/users/{userId}request (a response is expected containing an updated object with the same id)
     const { body: user1UpdatedBody } = await request(usersServer)

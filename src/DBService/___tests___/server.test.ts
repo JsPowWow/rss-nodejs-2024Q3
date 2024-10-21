@@ -27,7 +27,7 @@ describe('DBService tests', () => {
 
     const { body } = await request(server).get('/api/records').expect(200).expect('Content-Type', 'application/json');
 
-    expect(body).toMatchObject([
+    expect(body).toStrictEqual([
       { id: expect.any(String), title: 'Some data', foo: 'bar' },
       { id: expect.any(String), title: 'Another data', baz: 'wiz' },
     ]);
@@ -39,7 +39,7 @@ describe('DBService tests', () => {
       .expect(200)
       .expect('Content-Type', 'application/json');
     expect(body).toBeDefined();
-    expect(body).toMatchObject({ id: entity.id, title: 'Some data', foo: 'bar' });
+    expect(body).toStrictEqual({ id: entity.id, title: 'Some data', foo: 'bar' });
   });
   it(`"/api/records/something" GET should return 400 on invalid uuid`, async () => {
     await request(server).get(`/api/records/something}`).expect(400).expect('Content-Type', 'text/plain');
@@ -58,7 +58,7 @@ describe('DBService tests', () => {
       .expect(201)
       .expect('Content-Type', 'application/json');
 
-    expect(body).toMatchObject({ id: expect.any(String), tittle: 'Some data', foo: 'bar' });
+    expect(body).toStrictEqual({ id: expect.any(String), tittle: 'Some data', foo: 'bar' });
   });
   it(`"/api/records" POST should return 400 with empty body`, async () => {
     await request(server).post('/api/records').send({}).expect(400).expect('Content-Type', 'text/plain');
@@ -72,7 +72,7 @@ describe('DBService tests', () => {
       .expect(200)
       .expect('Content-Type', 'application/json');
     expect(body).toBeDefined();
-    expect(body).toMatchObject({ id: entity.id, title: 'New title', newData: true });
+    expect(body).toStrictEqual({ id: entity.id, title: 'New title', newData: true });
   });
   it(`"/api/records/not-a-id" PUT should return 400 on invalid uuid`, async () =>
     await request(server)
@@ -133,7 +133,7 @@ describe('DBService tests', () => {
       .expect(200)
       .expect('Content-Type', 'application/json');
 
-    expect(bodyOfPurge).toMatchObject({ message: 'Deleted 2 record(s)' });
+    expect(bodyOfPurge).toStrictEqual({ message: 'Deleted 2 record(s)' });
   });
 
   it(`"/api/records" PATCH should be rejected`, async () =>
