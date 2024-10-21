@@ -7,7 +7,7 @@ import { resolve } from 'path';
 import * as dotenv from 'dotenv';
 
 import { DEFAULT_PORT as DB_SERVICE_DEFAULT_PORT, startMemoryDBService } from '../DBService/DBMemoryServiceServer';
-import { log, output3Msg } from '../packages/utils/logging';
+import { log, output3Msg, warningMsg } from '../packages/utils/logging';
 import { DEFAULT_PORT } from '../UsersService/UsersServiceServer';
 
 dotenv.config({ path: resolve(__dirname, './../../.env') });
@@ -15,9 +15,10 @@ dotenv.config({ path: resolve(__dirname, './../../.env') });
 const memoryDbPort = Number(process.env.MEMORY_DB_SERVICE_PORT) || DB_SERVICE_DEFAULT_PORT;
 const loadBalancerPort = Number(process.env.LOAD_BALANCER_PORT) || DEFAULT_PORT;
 
+const simulateDelay = () => Math.floor(Math.random() * 300 + 50);
+
 async function* roundRobinGenerator(initialValue: number, maxValue: number): AsyncGenerator<number, number> {
   let currentValue = initialValue;
-  const simulateDelay = () => Math.floor(Math.random() * 300 + 50);
   while (true) {
     yield currentValue;
     currentValue = (currentValue + 1) % maxValue;
@@ -72,4 +73,5 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(loadBalancerPort, () => {
   log(output3Msg`👩‍✈️The ${'balancer'} service is listening on port ${loadBalancerPort}. `);
+  log(warningMsg`👩‍✈️${'Be patient:'} The ${workersCount} child worker node(s) should up and running ${'soon'}...`);
 });

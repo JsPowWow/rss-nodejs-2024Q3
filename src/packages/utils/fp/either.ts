@@ -3,31 +3,31 @@ const enum EitherType {
   Right = 'Right',
 }
 
-export type Either<L, R> = EitherConstructor<L, R, EitherType.Right> | EitherConstructor<L, R, EitherType.Left>;
+export type Either<L, R> = EitherInstance<L, R, EitherType.Right> | EitherInstance<L, R, EitherType.Left>;
 
-class EitherConstructor<L, R, T extends EitherType = EitherType> {
+class EitherInstance<L, R, T extends EitherType = EitherType> {
   static right<L = never, T = never>(v: T): Either<L, T> {
-    return new EitherConstructor<L, T, EitherType.Right>(EitherType.Right, v);
+    return new EitherInstance<L, T, EitherType.Right>(EitherType.Right, v);
   }
 
   static left<T = never, R = never>(v: T): Either<T, R> {
-    return new EitherConstructor<T, R, EitherType.Left>(EitherType.Left, v);
+    return new EitherInstance<T, R, EitherType.Left>(EitherType.Left, v);
   }
 
   static fromTry<L, R>(fn: () => R): Either<L, R> {
     try {
-      return EitherConstructor.right(fn());
+      return EitherInstance.right(fn());
     } catch (e) {
-      return EitherConstructor.left(e as L);
+      return EitherInstance.left(e as L);
     }
   }
 
   static from<T>(v: T): Either<never, T> {
-    return EitherConstructor.right(v);
+    return EitherInstance.right(v);
   }
 
   static async fromPromise<L, R>(promise: Promise<R>): Promise<Either<L, R>> {
-    return promise.then(EitherConstructor.right).catch((e) => EitherConstructor.left(e as L));
+    return promise.then(EitherInstance.right).catch((e) => EitherInstance.left(e as L));
   }
 
   static chain<L, R, NR>(f: (v: R) => Promise<Either<never, NR>>): (m: Either<L, R>) => Promise<Either<L, NR>>;
@@ -46,24 +46,24 @@ class EitherConstructor<L, R, T extends EitherType = EitherType> {
     return `Either::${String(this.value)}`;
   }
 
-  isLeft(): this is EitherConstructor<L, R, EitherType.Left> {
+  isLeft(): this is EitherInstance<L, R, EitherType.Left> {
     return this.type === EitherType.Left;
   }
 
-  isRight(): this is EitherConstructor<L, R, EitherType.Right> {
+  isRight(): this is EitherInstance<L, R, EitherType.Right> {
     return this.type === EitherType.Right;
   }
 
   chain<A, B>(f: (r: R) => Either<A, B>): Either<A | L, B> {
     if (this.isLeft()) {
-      return EitherConstructor.left<L, B>(this.value as L);
+      return EitherInstance.left<L, B>(this.value as L);
     }
     return f(this.value as R);
   }
 
   asyncChain<A, B>(f: (r: R) => Promise<Either<A, B>>): Promise<Either<A | L, B>> {
     if (this.isLeft()) {
-      return Promise.resolve(EitherConstructor.left<L, B>(this.value));
+      return Promise.resolve(EitherInstance.left<L, B>(this.value));
     }
     return f(this.value as R);
   }
@@ -78,23 +78,23 @@ class EitherConstructor<L, R, T extends EitherType = EitherType> {
 
   mapLeft<T>(f: (l: L) => T): Either<T, R> {
     if (this.isLeft()) {
-      return EitherConstructor.left<T, R>(f(this.value as L));
+      return EitherInstance.left<T, R>(f(this.value as L));
     }
-    return EitherConstructor.right<T, R>(this.value as R);
+    return EitherInstance.right<T, R>(this.value as R);
   }
 
   map<T>(f: (r: R) => T): Either<L, T> {
     if (this.isLeft()) {
-      return EitherConstructor.left<L, T>(this.value as L);
+      return EitherInstance.left<L, T>(this.value as L);
     }
-    return EitherConstructor.right<L, T>(f(this.value as R));
+    return EitherInstance.right<L, T>(f(this.value as R));
   }
 
   asyncMap<T>(f: (r: R) => Promise<T>): Promise<Either<L, T>> {
     if (this.isLeft()) {
-      return Promise.resolve(EitherConstructor.left<L, T>(this.value as L));
+      return Promise.resolve(EitherInstance.left<L, T>(this.value as L));
     }
-    return f(this.value as R).then((v) => EitherConstructor.right<L, T>(v));
+    return f(this.value as R).then((v) => EitherInstance.right<L, T>(v));
   }
 
   tapRight(f: (r: R) => void): typeof this {
@@ -111,7 +111,6 @@ class EitherConstructor<L, R, T extends EitherType = EitherType> {
   }
 }
 
-export const isEither = <L, R>(value: unknown | Either<L, R>): value is Either<L, R> =>
-  value instanceof EitherConstructor;
+export const isEither = <L, R>(value: unknown | Either<L, R>): value is Either<L, R> => value instanceof EitherInstance;
 
-export const { left, right, from, fromTry, fromPromise, chain } = EitherConstructor;
+export const { left, right, from, fromTry, fromPromise, chain } = EitherInstance;

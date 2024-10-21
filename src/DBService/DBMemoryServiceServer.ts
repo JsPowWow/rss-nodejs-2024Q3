@@ -13,17 +13,17 @@ export const startMemoryDBService = (port?: number) => {
     routes: DBServiceRoutes,
     serverName: SERVER_NAME,
     onRequestIncome: ({ req }) => {
-      log(outputMsg`Ⓜ️ ${SERVER_NAME} on port ${srvPort} |||| 🔜 ${req?.method?.padEnd(6)}${req.url}`);
+      log(outputMsg`Ⓜ️ ${SERVER_NAME} on port ${srvPort} >>>> 🔜 ${req?.method?.padEnd(6)}${req.url}`);
     },
     onRequestFinished: ({ req, res }) => {
       log(
-        outputMsg`Ⓜ️ ${SERVER_NAME} on port ${srvPort} |||| 🔙 ${req?.method?.padEnd(6)}${req.url}\t${res.statusCode}`,
+        outputMsg`Ⓜ️ ${SERVER_NAME} on port ${srvPort} <<<< 🔙 ${req?.method?.padEnd(6)}${req.url}\t${res.statusCode}`,
       );
     },
     onRequestError: ({ req, res, err }) => {
       log(errorMsg`Error occurred: ${'status' in err ? err.status : ''} ${ErrorMessage.from(err)}`);
       log(
-        outputMsg`Ⓜ️ ${SERVER_NAME} on port ${srvPort} |||| 🔙 ${req?.method?.padEnd(6)}${req.url}\t${res.statusCode} 🆘️`,
+        errorMsg`👬 ${SERVER_NAME} on port ${srvPort} |||| 🆘️ ${req?.method?.padEnd(6)}${req.url}\t${res.statusCode} 🆘️`,
       );
     },
   });

@@ -8,8 +8,8 @@ export const warningMsg = styledMsg({
   values: ['yellowBright', 'italic'],
 });
 export const errorMsg = styledMsg({
-  text: ['red', 'bold', 'italic'],
-  values: ['yellow', 'italic'],
+  text: ['red', 'bold'],
+  values: ['yellow'],
 });
 
 /**
