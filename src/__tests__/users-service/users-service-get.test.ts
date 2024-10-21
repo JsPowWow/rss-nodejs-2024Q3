@@ -18,23 +18,23 @@ describe('DBService GET tests', () => {
   it(`"/api/users/:userId" GET should return 200 with user + id`, async () => {
     const { body: user1 } = await request(usersServer)
       .post('/api/users')
-      .send(getUserBody({ name: 'Alex', age: 33 }, 'anime'));
+      .send(getUserBody({ username: 'Alex', age: 33 }, 'anime'));
 
     const { body: user2 } = await request(usersServer)
       .post('/api/users')
-      .send(getUserBody({ name: 'Olga', age: 17 }, 'cars'));
+      .send(getUserBody({ username: 'Olga', age: 17 }, 'cars'));
 
     const { body: user1Response } = await request(usersServer)
       .get(`/api/users/${user1.id}`)
       .expect(200)
       .expect('Content-Type', 'application/json');
-    expect(user1Response).toStrictEqual({ id: user1.id, name: 'Alex', age: 33, hobbies: ['anime'] });
+    expect(user1Response).toStrictEqual({ id: user1.id, username: 'Alex', age: 33, hobbies: ['anime'] });
 
     const { body: user2Response } = await request(usersServer)
       .get(`/api/users/${user2.id}`)
       .expect(200)
       .expect('Content-Type', 'application/json');
-    expect(user2Response).toStrictEqual({ id: user2.id, name: 'Olga', age: 17, hobbies: ['cars'] });
+    expect(user2Response).toStrictEqual({ id: user2.id, username: 'Olga', age: 17, hobbies: ['cars'] });
   });
 
   it(`"/api/users/something" GET should return 400 on invalid uuid`, async () => {
@@ -52,11 +52,11 @@ describe('DBService GET tests', () => {
   it(`"/api/users" GET should return 200 with a stored users`, async () => {
     const { body: user1 } = await request(usersServer)
       .post('/api/users')
-      .send(getUserBody({ name: 'Alex', age: 33 }, 'anime'));
+      .send(getUserBody({ username: 'Alex', age: 33 }, 'anime'));
 
     const { body: user2 } = await request(usersServer)
       .post('/api/users')
-      .send(getUserBody({ name: 'Olga', age: 17 }, 'cars'));
+      .send(getUserBody({ username: 'Olga', age: 17 }, 'cars'));
 
     const { body } = await request(usersServer)
       .get('/api/users')
@@ -64,8 +64,8 @@ describe('DBService GET tests', () => {
       .expect('Content-Type', 'application/json');
 
     expect(body).toStrictEqual([
-      { id: user1.id, name: 'Alex', age: 33, hobbies: ['anime'] },
-      { id: user2.id, name: 'Olga', age: 17, hobbies: ['cars'] },
+      { id: user1.id, username: 'Alex', age: 33, hobbies: ['anime'] },
+      { id: user2.id, username: 'Olga', age: 17, hobbies: ['cars'] },
     ]);
   });
 });

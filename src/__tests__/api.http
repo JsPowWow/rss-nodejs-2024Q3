@@ -4,7 +4,7 @@ Accept: application/json
 
 {
   "age": 2002,
-  "name": "SuperHero",
+  "username": "SuperHero",
   "hobbies": ["javascript"]
 }
 
@@ -22,7 +22,7 @@ Accept: application/json
 
 {
   "age": 40,
-  "name": "SuperHeroWithNewName",
+  "username": "SuperHeroWithNewName",
   "hobbies": ["node", "react"]
 }
 

@@ -1,7 +1,7 @@
 import request from 'supertest';
 
-import { enableConsoleLogging, getUserBody, startTestServers } from './test-utils';
-import { NotFoundError } from '../packages/httpServer';
+import { NotFoundError } from '../../packages/httpServer';
+import { enableConsoleLogging, getUserBody, startTestServers } from '../test-utils';
 
 describe('DBService tests', () => {
   const { usersServer, memDbServer, stopUsersServer, stopMemDbServer } = startTestServers(777);
@@ -36,15 +36,15 @@ describe('DBService tests', () => {
     // 2. A new object is created by a POST api/users request (a response containing newly created record is expected)
     const { body: user1 } = await request(usersServer)
       .post('/api/users')
-      .send(getUserBody({ name: 'Alex', age: 33 }, 'anime'));
-    expect(user1).toStrictEqual({ id: expect.any(String), name: 'Alex', age: 33, hobbies: ['anime'] });
+      .send(getUserBody({ username: 'Alex', age: 33 }, 'anime'));
+    expect(user1).toStrictEqual({ id: expect.any(String), username: 'Alex', age: 33, hobbies: ['anime'] });
 
     // 3. With a GET api/user/{userId} request, we try to get the created record by its id (the created record is expected)
     const { body: user1GetResponse } = await request(usersServer)
       .get(`/api/users/${user1.id}`)
       .expect(200)
       .expect('Content-Type', 'application/json');
-    expect(user1GetResponse).toStrictEqual({ id: user1.id, name: 'Alex', age: 33, hobbies: ['anime'] });
+    expect(user1GetResponse).toStrictEqual({ id: user1.id, username: 'Alex', age: 33, hobbies: ['anime'] });
 
     // 4. We try to update the created record with a PUT api/users/{userId}request (a response is expected containing an updated object with the same id)
     const { body: user1UpdatedBody } = await request(usersServer)
@@ -52,13 +52,13 @@ describe('DBService tests', () => {
       .send({
         id: 'valueOfIdWhichWillIgnored',
         title: 'notUserFieldWhichWillIgnored',
-        ...getUserBody({ name: 'Alexander', age: 47 }, 'react', 'javascript'),
+        ...getUserBody({ username: 'Alexander', age: 47 }, 'react', 'javascript'),
       })
       .expect(200)
       .expect('Content-Type', 'application/json');
     expect(user1UpdatedBody).toStrictEqual({
       id: user1.id,
-      name: 'Alexander',
+      username: 'Alexander',
       age: 47,
       hobbies: ['react', 'javascript'],
     });

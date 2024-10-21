@@ -18,11 +18,11 @@ describe('DBService POST tests', () => {
   it(`"/api/users" POST should return 201 with created user entity`, async () => {
     const { body } = await request(usersServer)
       .post('/api/users')
-      .send(getUserBody({ name: 'Alex', age: 33 }, 'basketball', 'anime'))
+      .send(getUserBody({ username: 'Alex', age: 33 }, 'basketball', 'anime'))
       .expect(201)
       .expect('Content-Type', 'application/json');
 
-    expect(body).toStrictEqual({ id: expect.any(String), name: 'Alex', age: 33, hobbies: ['basketball', 'anime'] });
+    expect(body).toStrictEqual({ id: expect.any(String), username: 'Alex', age: 33, hobbies: ['basketball', 'anime'] });
   });
 
   it(`"/api/users" POST should return 400 with empty body`, async () => {

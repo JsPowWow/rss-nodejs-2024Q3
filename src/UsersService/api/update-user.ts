@@ -21,7 +21,7 @@ export const updateUserWithDb =
     const recordResponse = await fetch(`${DBHostname}/api/records/${userId}`, {
       method: 'PUT',
       body: JSON.stringify(<Omit<User, 'id'>>{
-        name: requestBody.name,
+        username: requestBody.username,
         age: requestBody.age,
         hobbies: requestBody.hobbies,
       }),

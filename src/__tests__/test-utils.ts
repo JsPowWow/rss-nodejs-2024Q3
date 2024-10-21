@@ -12,9 +12,12 @@ export const startTestServers = (port: number) => {
   return { memDbServer, usersServer, stopMemDbServer, stopUsersServer };
 };
 
-export const getUserBody = ({ name, age }: Pick<User, 'name' | 'age'>, ...hobbies: string[]): Omit<User, 'id'> => {
+export const getUserBody = (
+  { username, age }: Pick<User, 'username' | 'age'>,
+  ...hobbies: string[]
+): Omit<User, 'id'> => {
   return {
-    name,
+    username,
     age,
     hobbies: [...hobbies],
   };

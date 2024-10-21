@@ -7,7 +7,7 @@ import { noop } from '../../packages/utils/common';
 
 const USER_DATA = Object.freeze({
   id: '68412a87-1843-4d92-b506-009e8fbcfb11',
-  name: 'Test User',
+  username: 'Test User',
   age: 27,
   hobbies: ['fishing', 'sport'],
   isActive: true,
@@ -18,7 +18,7 @@ const testRoutes: RoutesConfig = {
   '/user-example/ageNum': USER_DATA.age,
   '/user-example/active': USER_DATA.isActive,
   '/user-example': USER_DATA,
-  '/user-example/name': () => USER_DATA.name.toUpperCase(),
+  '/user-example/name': () => USER_DATA.username.toUpperCase(),
   '/user-example/age': () => USER_DATA.age,
   '/user-example/method/full': ({ req, res, resolve }) => {
     resolve({ status: res.statusCode, data: USER_DATA, url: req.url });

@@ -18,11 +18,11 @@ describe('DBService tests', () => {
   it(`"/api/users/:userId" DELETE should return 204 and delete entity`, async () => {
     const { body: user1 } = await request(usersServer)
       .post('/api/users')
-      .send(getUserBody({ name: 'Alex', age: 33 }, 'anime'));
+      .send(getUserBody({ username: 'Alex', age: 33 }, 'anime'));
 
     const { body: user2 } = await request(usersServer)
       .post('/api/users')
-      .send(getUserBody({ name: 'Olga', age: 17 }, 'cars'));
+      .send(getUserBody({ username: 'Olga', age: 17 }, 'cars'));
 
     await request(usersServer).delete(`/api/users/${user1.id}`).expect(204);
 
@@ -35,7 +35,7 @@ describe('DBService tests', () => {
   it(`"/api/users/:userId" DELETE should return 400 on invalid uuid`, async () => {
     await request(usersServer)
       .delete(`/api/users/not-a-id`)
-      .send(getUserBody({ name: 'Olga', age: 17 }, 'cars'))
+      .send(getUserBody({ username: 'Olga', age: 17 }, 'cars'))
       .expect(400)
       .expect('Content-Type', 'text/plain');
   });
@@ -43,7 +43,7 @@ describe('DBService tests', () => {
   it(`"/api/users:usersId" DELETE should return 404 on non-existed uuid`, async () =>
     await request(usersServer)
       .delete(`/api/users/97c44eb1-8c2f-4df0-a988-d6da5f2d9ee9`)
-      .send(getUserBody({ name: 'Olga', age: 17 }, 'cars'))
+      .send(getUserBody({ username: 'Olga', age: 17 }, 'cars'))
       .expect(404)
       .expect('Content-Type', 'text/plain'));
 });
